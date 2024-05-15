@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import { IUser, UserModel } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../../config';
+import validator from 'validator';
 
 const UserSchema = new Schema<IUser, UserModel>(
   {
@@ -17,8 +18,12 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     email: {
       type: String,
-      required: true,
+      required: [true, 'Email is required'],
       unique: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: 'Please provide a valid email address',
+      },
     },
     phone_number: {
       type: String,
@@ -27,8 +32,8 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     password: {
       type: String,
-      required: true,
-      select: 0,
+      required: [true, 'Password is required'],
+      select: false,
     },
     address: {
       type: String,
