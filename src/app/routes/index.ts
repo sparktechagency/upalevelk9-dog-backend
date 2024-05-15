@@ -12,6 +12,7 @@ import { DashboardOverviewRoutes } from '../modules/overview/overview.routes';
 import { ProgramArticleRoutes } from '../modules/program-article/program-article.routes';
 import { PromoPackageRoutes } from '../modules/promo-package/promo-package.routes';
 import { PromoRoutes } from '../modules/promo/promo.routes';
+import { FeedbackRoutes } from '../modules/feedback/feedback.routes';
 
 const router = express.Router();
 
@@ -67,6 +68,10 @@ const moduleRoutes = [
   {
     path: '/overview',
     route: DashboardOverviewRoutes,
+  },
+  {
+    path: '/feedback',
+    route: FeedbackRoutes,
   },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));

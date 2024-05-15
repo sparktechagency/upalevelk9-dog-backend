@@ -13,6 +13,10 @@ const scheduleSchema = new Schema<ISchedule>(
       type: String,
       required: true,
     },
+    date: {
+      type: Date,
+      required: true,
+    },
     password: {
       type: String,
       required: true,
