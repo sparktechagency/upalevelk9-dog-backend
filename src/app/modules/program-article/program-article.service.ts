@@ -3,9 +3,9 @@ import { Request } from 'express';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import ApiError from '../../../errors/ApiError';
 import { ProgramArticle } from './program-article.model';
-import { INotification } from '../notifications/notifications.interface';
-import User from '../user/user.model';
-import Notification from '../notifications/notifications.model';
+// import { INotification } from '../notifications/notifications.interface';
+// import User from '../user/user.model';
+// import Notification from '../notifications/notifications.model';
 
 const insertIntoDB = async (req: Request) => {
   const { files, body } = req;
@@ -34,24 +34,24 @@ const insertIntoDB = async (req: Request) => {
     video,
     ...body,
   });
-  const loggedInUsers = await User.find({});
+  // const loggedInUsers = await User.find({});
 
-  // Send notifications to all logged-in users
-  const notifications: INotification[] = loggedInUsers.map(
-    (user: { _id: any }) => ({
-      user: user._id,
-      title: `New Article: ${body.article_title}`,
-      message: `A new article titled "${body.article_title}" has been posted. Check it out!`,
-      status: 'unread',
-    }),
-  );
+  // // Send notifications to all logged-in users
+  // const notifications: INotification[] = loggedInUsers.map(
+  //   (user: { _id: any }) => ({
+  //     user: user._id,
+  //     title: `New Article: ${body.article_title}`,
+  //     message: `A new article titled "${body.article_title}" has been posted. Check it out!`,
+  //     status: 'unread',
+  //   }),
+  // );
 
-  try {
-    await Notification.insertMany(notifications);
-    console.log('Notifications sent successfully');
-  } catch (error) {
-    console.error('Failed to send notifications', error);
-  }
+  // try {
+  //   await Notification.insertMany(notifications);
+  //   console.log('Notifications sent successfully');
+  // } catch (error) {
+  //   console.error('Failed to send notifications', error);
+  // }
 
   return result;
 };
