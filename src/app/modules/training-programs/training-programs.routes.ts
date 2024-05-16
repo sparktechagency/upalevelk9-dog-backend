@@ -3,6 +3,8 @@ import auth from '../../middlewares/auth';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import { TrainingController } from './training-programs.controller';
 import { uploadFile } from '../../middlewares/fileUploader';
+import { validateRequest } from '../../middlewares/validateRequest';
+import { TrainingProgramValidation } from './training-program.validation';
 
 const router = express.Router();
 
@@ -10,6 +12,7 @@ router.post(
   '/add',
   auth(ENUM_USER_ROLE.ADMIN),
   uploadFile(),
+  validateRequest(TrainingProgramValidation.post),
   TrainingController.insertIntoDB,
 );
 router.get(
