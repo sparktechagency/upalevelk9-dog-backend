@@ -61,7 +61,27 @@ const post = z.object({
       .nonempty({ message: 'Image array cannot be empty' }),
   }),
 });
+const update = z.object({
+  body: z.object({
+    article_title: z.string({}).optional(),
+    article_name: z.string({}).optional(),
+    article_description: z.string({}).optional(),
+    training_program: z.string({}).optional(),
+    end_date: z.string({}).optional(),
+    event_type: z.string({}).optional(),
 
-export const EventValidation = {
+    location: z.string({}).optional(),
+    category: z.string({}).optional(),
+  }),
+  files: z
+    .object({
+      thumbnail: z.array(z.object({}).refine(() => true, {})).optional(),
+      video: z.array(z.object({}).refine(() => true, {})).optional(),
+      video_thumbnail: z.array(z.object({}).refine(() => true, {})).optional(),
+    })
+    .optional(),
+});
+export const ProgramArticleValidation = {
   post,
+  update,
 };
