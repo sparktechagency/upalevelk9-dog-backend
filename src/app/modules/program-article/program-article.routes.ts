@@ -3,6 +3,8 @@ import auth from '../../middlewares/auth';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import { uploadFile } from '../../middlewares/fileUploader';
 import { ProgramArticleController } from './program-article.controller';
+import { validateRequest } from '../../middlewares/validateRequest';
+import { ProgramArticleValidation } from './program-article.validation';
 
 const router = express.Router();
 
@@ -10,6 +12,7 @@ router.post(
   '/add',
   auth(ENUM_USER_ROLE.ADMIN),
   uploadFile(),
+  validateRequest(ProgramArticleValidation.post),
   ProgramArticleController.insertIntoDB,
 );
 router.get(
@@ -26,6 +29,7 @@ router.patch(
   '/update/:id',
   auth(ENUM_USER_ROLE.ADMIN),
   uploadFile(),
+  validateRequest(ProgramArticleValidation.update),
   ProgramArticleController.updateTraining,
 );
 router.delete(

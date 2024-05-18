@@ -16,8 +16,16 @@ router.post(
   UserController.registrationUser,
 );
 router.post('/activate-user', UserController.activateUser);
-router.post('/login', UserController.login);
-router.post('/refresh-token', UserController.refreshToken);
+router.post(
+  '/login',
+  validateRequest(UserValidation.loginZodSchema),
+  UserController.login,
+);
+router.post(
+  '/refresh-token',
+  validateRequest(UserValidation.refreshTokenZodSchema),
+  UserController.refreshToken,
+);
 router.delete('/delete-account', UserController.deleteMyAccount);
 router.patch(
   '/change-password',
@@ -50,7 +58,11 @@ router.post(
   validateRequest(AdminValidation.create),
   AdminController.registrationUser,
 );
-router.post('/admin/login', AdminController.login);
+router.post(
+  '/admin/login',
+  validateRequest(UserValidation.loginZodSchema),
+  AdminController.login,
+);
 router.post('/admin/refresh-token', AdminController.refreshToken);
 router.post('/admin/forgot-password', AdminController.forgotPass);
 router.post('/admin/reset-password', AdminController.resetPassword);

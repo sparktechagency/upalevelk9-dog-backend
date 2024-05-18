@@ -2,9 +2,16 @@ import express from 'express';
 import auth from '../../middlewares/auth';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import { PromosPlanController } from './promo-package.controller';
+import { validateRequest } from '../../middlewares/validateRequest';
+import { PromoPackageValidation } from './promo-package.validation';
 const router = express.Router();
 
-router.post('/add', auth(ENUM_USER_ROLE.ADMIN), PromosPlanController.adPromos);
+router.post(
+  '/add',
+  auth(ENUM_USER_ROLE.ADMIN),
+  validateRequest(PromoPackageValidation.post),
+  PromosPlanController.adPromos,
+);
 
 router.post(
   '/add-item',
@@ -29,6 +36,7 @@ router.delete(
 router.patch(
   '/update/:id',
   auth(ENUM_USER_ROLE.ADMIN),
+  validateRequest(PromoPackageValidation.update),
   PromosPlanController.updatePromosTitle,
 );
 router.patch(

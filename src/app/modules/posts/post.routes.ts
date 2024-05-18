@@ -20,7 +20,11 @@ router.post(
   auth(ENUM_USER_ROLE.USER),
   PostController.addComment,
 );
-router.get('/my-posts', auth(ENUM_USER_ROLE.USER), PostController.getMyPosts);
+router.get(
+  '/my-posts',
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  PostController.getMyPosts,
+);
 router.get(
   '/single-post/:id',
   auth(ENUM_USER_ROLE.USER),
@@ -40,6 +44,7 @@ router.patch(
   '/edit-post/:id',
   auth(ENUM_USER_ROLE.USER),
   uploadFile(),
+  // validateRequest(PostValidation.update),
   PostController.updatePost,
 );
 
