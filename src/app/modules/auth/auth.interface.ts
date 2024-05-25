@@ -7,6 +7,7 @@ export type ILoginUser = {
 export type IChangePassword = {
   oldPassword: string;
   newPassword: string;
+  confirmPassword: string;
 };
 export type ILoginUserResponse = {
   accessToken: string;
