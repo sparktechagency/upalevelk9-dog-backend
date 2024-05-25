@@ -23,7 +23,11 @@ const registrationUser: RequestHandler = catchAsync(
 );
 const activateUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await UserService.activateUser(req.body);
+    const activation_token = req.headers.authorization;
+    const result = await UserService.activateUser(
+      req.body,
+      activation_token as any,
+    );
     const { refreshToken } = result;
     // set refresh token into cookie
     const cookieOptions = {
@@ -148,9 +152,20 @@ const forgotPass = catchAsync(async (req: Request, res: Response) => {
     message: 'Check your email!',
   });
 });
+const checkIsValidForgetActivationCode = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await UserService.checkIsValidForgetActivationCode(req.body);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Success!',
+      data: result,
+    });
+  },
+);
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const token = req.headers.authorization || '';
-  await UserService.resetPassword(req.body, token);
+  // const token = req.headers.authorization || '';
+  await UserService.resetPassword(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -180,4 +195,5 @@ export const UserController = {
   resetPassword,
   activateUser,
   deleteMyAccount,
+  checkIsValidForgetActivationCode,
 };

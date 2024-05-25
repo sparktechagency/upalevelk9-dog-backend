@@ -16,6 +16,7 @@ export type IRegistration = {
 };
 export type IActivationToken = {
   token: string;
+
   activationCode: string;
 };
 export type IActivationRequest = {
