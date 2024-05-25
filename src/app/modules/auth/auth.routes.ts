@@ -34,6 +34,7 @@ router.patch(
 );
 router.post('/forgot-password', UserController.forgotPass);
 router.post('/reset-password', UserController.resetPassword);
+router.post('/resend', UserController.resendActivationCode);
 router.post('/verify-otp', UserController.checkIsValidForgetActivationCode);
 router.get(
   '/admin/users',

@@ -32,6 +32,7 @@ import { registrationSuccessEmailBody } from '../../../mails/user.register';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import { sendResetEmail } from '../auth/sendResetMails';
 import { userSearchableField } from './user.constants';
+import { resetEmailTemplate } from './user.reset-email';
 
 //!
 //!
@@ -343,7 +344,7 @@ const forgotPass = async (payload: { email: string }) => {
   const user = (await User.findOne(
     { email: payload.email },
     { _id: 1, role: 1 },
-  )) as any;
+  )) as IUser;
 
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist!');
@@ -364,9 +365,9 @@ const forgotPass = async (payload: { email: string }) => {
 
   const activationCode = forgetActivationCode();
   const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
-
-  // Store the reset code and its expiry time in the global object
-  resetCodes[payload.email] = { code: activationCode, expiry: expiryTime };
+  user.verifyCode = activationCode;
+  user.verifyExpire = expiryTime;
+  await user.save();
 
   sendResetEmail(
     profile.email,
@@ -379,6 +380,47 @@ const forgotPass = async (payload: { email: string }) => {
   `,
   );
 };
+//!
+const resendActivationCode = async (payload: { email: string }) => {
+  const email = payload.email;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist!');
+  }
+
+  let profile = null;
+  if (user.role === ENUM_USER_ROLE.USER) {
+    profile = await User.findOne({ _id: user._id });
+  }
+
+  if (!profile) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Profile not found!');
+  }
+
+  if (!profile.email) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email not found!');
+  }
+
+  const activationCode = forgetActivationCode();
+  const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
+  user.verifyCode = activationCode;
+  user.verifyExpire = expiryTime;
+  await user.save();
+
+  sendResetEmail(
+    profile.email,
+    `
+      <div>
+        <p>Hi, ${profile.name}</p>
+        
+        <p>Your password reset Code: ${activationCode}</p>
+        <p>Thank you</p>
+      </div>
+  `,
+  );
+};
+//!
 const forgetActivationCode = () => {
   const activationCode = Math.floor(100000 + Math.random() * 900000).toString();
   return activationCode;
@@ -394,25 +436,17 @@ const checkIsValidForgetActivationCode = async (payload: {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist!');
   }
 
-  // Retrieve the stored reset code and expiry time
-  const storedCodeInfo = resetCodes[payload.email];
-
-  if (!storedCodeInfo) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Reset code not found!');
-  }
-
-  if (storedCodeInfo.code !== payload.code) {
+  if (user.verifyCode !== payload.code) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid reset code!');
   }
 
   const currentTime = new Date();
-  if (currentTime > storedCodeInfo.expiry) {
+  if (currentTime > user.verifyExpire) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Reset code has expired!');
   }
 
   return { valid: true };
 };
-
 //!
 const resetPassword = async (payload: {
   email: string;
@@ -437,6 +471,9 @@ const resetPassword = async (payload: {
   );
 
   await User.updateOne({ email }, { password }, { new: true });
+  user.verifyCode = null;
+  user.verifyExpire = null;
+  await user.save();
 };
 
 export const UserService = {
@@ -454,4 +491,5 @@ export const UserService = {
   activateUser,
   deleteMyAccount,
   checkIsValidForgetActivationCode,
+  resendActivationCode,
 };

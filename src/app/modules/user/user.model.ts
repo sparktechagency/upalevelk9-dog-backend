@@ -93,6 +93,12 @@ const UserSchema = new Schema<IUser, UserModel>(
     date_of_birth: {
       type: Date,
     },
+    verifyCode: {
+      type: String,
+    },
+    verifyExpire: {
+      type: Date,
+    },
     is_block: {
       type: Boolean,
       default: false,
