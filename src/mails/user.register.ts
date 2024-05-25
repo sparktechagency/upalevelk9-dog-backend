@@ -56,8 +56,6 @@ export const registrationSuccessEmailBody = (userData: any) => `
         <h1>${userData?.activationCode}</h1>
         <p>Please enter this code on the activation page within the next 5 minutes.</p>
         <p>If you didn't register for Dog Website, please ignore this email.</p>
-        <p>Click the button below to take action:</p>
-        <a class="button" href="#">Activate Account</a>
         <p>If you have any questions, please contact us at <a href="mailto:yeasinarafat1734@gmail.com">yeasinarafat1734@gmail.com</a>.</p>
       </div>
     </body>

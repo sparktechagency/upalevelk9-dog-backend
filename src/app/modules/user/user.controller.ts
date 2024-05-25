@@ -45,6 +45,21 @@ const activateUser: RequestHandler = catchAsync(
     });
   },
 );
+
+const resendActivationCode: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const data = req.body;
+
+    const result = await UserService.resendActivationCode(data);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Resend successfully',
+      data: result,
+    });
+  },
+);
 const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { ...userData } = req.body;
@@ -196,4 +211,5 @@ export const UserController = {
   activateUser,
   deleteMyAccount,
   checkIsValidForgetActivationCode,
+  resendActivationCode,
 };
