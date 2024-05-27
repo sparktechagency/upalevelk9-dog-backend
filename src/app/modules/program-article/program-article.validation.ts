@@ -23,19 +23,6 @@ const post = z.object({
     training_program: z.string({
       required_error: 'training_program  is required',
     }),
-    end_date: z.string({
-      required_error: 'end_date  is required',
-    }),
-    event_type: z.string({
-      required_error: 'event_type is required',
-    }),
-
-    location: z.string({
-      required_error: 'location  is required',
-    }),
-    category: z.string({
-      required_error: 'category is required',
-    }),
   }),
   files: z.object({
     thumbnail: z

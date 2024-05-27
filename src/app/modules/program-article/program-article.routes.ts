@@ -21,9 +21,19 @@ router.get(
   ProgramArticleController.getTraining,
 );
 router.get(
-  '/single/:id',
+  '/details/:id',
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
   ProgramArticleController.getSingleTraining,
+);
+// router.get(
+//   '/article-detail/:id',
+//   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+//   ProgramArticleController.getSingleTrainingByProgram,
+// );
+router.get(
+  '/program-articles/:id',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  ProgramArticleController.getTrainingByProgram,
 );
 router.patch(
   '/update/:id',

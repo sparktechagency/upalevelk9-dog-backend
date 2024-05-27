@@ -28,10 +28,6 @@ const postSchema = new Schema<IPost>(
     },
     title: {
       type: String,
-      required: true,
-      trim: true,
-      minlength: 1,
-      maxlength: 100,
     },
     description: {
       type: String,

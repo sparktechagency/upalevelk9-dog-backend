@@ -35,6 +35,32 @@ const getSingleTraining = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getSingleTrainingByProgram = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await ProgramArticleService.getSingleTrainingByProgram(
+      req.params.id,
+    );
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Training Programs retrieved successful',
+      data: result,
+    });
+  },
+);
+const getTrainingByProgram = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProgramArticleService.getTrainingByProgram(
+    req.params.id,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Program article retrieved successful',
+    data: result,
+  });
+});
 const updateTraining = catchAsync(async (req: Request, res: Response) => {
   const result = await ProgramArticleService.updateTraining(req);
 
@@ -62,4 +88,6 @@ export const ProgramArticleController = {
   updateTraining,
   deleteTraining,
   getSingleTraining,
+  getSingleTrainingByProgram,
+  getTrainingByProgram,
 };
