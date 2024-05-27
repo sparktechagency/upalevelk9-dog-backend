@@ -26,6 +26,11 @@ router.get(
   PostController.getMyPosts,
 );
 router.get(
+  '/community-posts',
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  PostController.Posts,
+);
+router.get(
   '/single-post/:id',
   auth(ENUM_USER_ROLE.USER),
   PostController.singlePost,

@@ -10,6 +10,7 @@ import { IReqUser } from '../user/user.interface';
 const createPost = async (req: Request) => {
   const { files } = req;
   const data = req.body;
+  const user = req.user;
   //@ts-ignore
   if (!data && !files?.image) {
     throw new Error('Data or image missing in the request body!');
@@ -19,11 +20,12 @@ const createPost = async (req: Request) => {
   //@ts-ignore
   if (files && files.image) {
     //@ts-ignore
-    image = files?.image[0].path;
+    image = `/images/image/${files.image[0].filename}`;
   }
 
   const result = await Post.create({
     image,
+    user: user?.userId,
     ...data,
   });
   return result;
@@ -31,6 +33,23 @@ const createPost = async (req: Request) => {
 //! Get my posts
 const getMyPosts = async (user: IReqUser, query: Record<string, unknown>) => {
   const postQuery = new QueryBuilder(Post.find({ user: user?.userId }), query)
+    .search(['title'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await postQuery.modelQuery;
+  const meta = await postQuery.countTotal();
+
+  return {
+    meta,
+    data: result,
+  };
+};
+//! Community Post
+const Posts = async (query: Record<string, unknown>) => {
+  const postQuery = new QueryBuilder(Post.find({}).populate('user'), query)
     .search(['title'])
     .filter()
     .sort()
@@ -76,7 +95,7 @@ const updatePost = async (id: string, req: Request) => {
   //@ts-ignore
   if (files && files.image) {
     //@ts-ignore
-    image = files?.image[0].path;
+    image = `/images/image/${files.image[0].filename}`;
   }
   const updatedPostData: Partial<IPost> = { ...PostData };
   const result = await Post.findOneAndUpdate(
@@ -137,4 +156,5 @@ export const PostService = {
   updatePost,
   addComment,
   deleteComment,
+  Posts,
 };

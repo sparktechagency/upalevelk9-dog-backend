@@ -14,19 +14,19 @@ const insertIntoDB = async (req: Request) => {
   //@ts-ignore
   if (files && files.thumbnail) {
     //@ts-ignore
-    thumbnail = files.thumbnail[0].path;
+    thumbnail = `/images/thumbnail/${files.thumbnail[0].filename}`;
   }
   let video_thumbnail = undefined;
   //@ts-ignore
   if (files && files.video_thumbnail) {
     //@ts-ignore
-    video_thumbnail = files.video_thumbnail[0].path;
+    video_thumbnail = `/images/video_thumbnail/${files.video_thumbnail[0].path}`;
   }
   let video = undefined;
   //@ts-ignore
   if (files && files.video) {
     //@ts-ignore
-    video = files.video[0].path;
+    video = `/video/${files.video[0].filename}`;
   }
   const result = await ProgramArticle.create({
     thumbnail,
@@ -78,6 +78,20 @@ const getSingleTraining = async (id: string) => {
   }
   return result;
 };
+const getSingleTrainingByProgram = async (id: string) => {
+  const result = await ProgramArticle.findOne({ training_program: id });
+  if (!result) {
+    throw new ApiError(404, 'Training Programs not found');
+  }
+  return result;
+};
+const getTrainingByProgram = async (id: string) => {
+  const result = await ProgramArticle.find({ training_program: id });
+  if (!result) {
+    throw new ApiError(404, 'Program article not found');
+  }
+  return result;
+};
 const updateTraining = async (req: Request) => {
   const { files, body } = req;
   const { id } = req.params;
@@ -86,19 +100,19 @@ const updateTraining = async (req: Request) => {
   //@ts-ignore
   if (files && files.thumbnail) {
     //@ts-ignore
-    thumbnail = files.thumbnail[0].path;
+    thumbnail = `/images/thumbnail/${files.thumbnail[0].filename}`;
   }
   let video_thumbnail = undefined;
   //@ts-ignore
   if (files && files.video_thumbnail) {
     //@ts-ignore
-    video_thumbnail = files.video_thumbnail[0].path;
+    video_thumbnail = `/images/video_thumbnail/${files.video_thumbnail[0].path}`;
   }
   let video = undefined;
   //@ts-ignore
   if (files && files.video) {
     //@ts-ignore
-    video = files.video[0].path;
+    video = `/video/${files.video[0].filename}`;
   }
   const isExist = await ProgramArticle.findById(id);
   if (!isExist) {
@@ -135,4 +149,6 @@ export const ProgramArticleService = {
   updateTraining,
   deleteTraining,
   getSingleTraining,
+  getSingleTrainingByProgram,
+  getTrainingByProgram,
 };

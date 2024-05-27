@@ -27,8 +27,9 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     phone_number: {
       type: String,
-      unique: true,
-      sparse: true,
+      // unique: true,
+      // sparse: true,
+      required: true,
     },
     password: {
       type: String,
@@ -66,34 +67,14 @@ const UserSchema = new Schema<IUser, UserModel>(
     language: {
       type: String,
     },
-    relationship_status: {
-      type: String,
-    },
-    have_kids: {
-      type: String,
-    },
-    smoke: {
-      type: String,
-    },
-    drink: {
-      type: String,
-    },
-    height: {
-      type: String,
-    },
-    body_type: {
-      type: String,
-    },
-    eyes: {
-      type: String,
-    },
-    looking_for: {
-      type: String,
-    },
+
     date_of_birth: {
       type: Date,
     },
     verifyCode: {
+      type: String,
+    },
+    activationCode: {
       type: String,
     },
     verifyExpire: {
@@ -103,11 +84,16 @@ const UserSchema = new Schema<IUser, UserModel>(
       type: Boolean,
       default: false,
     },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
     plan_type: {
       type: String,
       enum: ['free', 'basic', 'gold', 'premium'],
       default: 'free',
     },
+    expirationTime: { type: Date, default: () => Date.now() + 2 * 60 * 1000 },
   },
   {
     timestamps: true,

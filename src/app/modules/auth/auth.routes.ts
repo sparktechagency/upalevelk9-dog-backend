@@ -21,12 +21,11 @@ router.post(
   validateRequest(UserValidation.loginZodSchema),
   UserController.login,
 );
-router.post(
-  '/refresh-token',
-  validateRequest(UserValidation.refreshTokenZodSchema),
-  UserController.refreshToken,
+router.delete(
+  '/delete-account',
+  auth(ENUM_USER_ROLE.USER),
+  UserController.deleteMyAccount,
 );
-router.delete('/delete-account', UserController.deleteMyAccount);
 router.patch(
   '/change-password',
   auth(ENUM_USER_ROLE.USER),
@@ -43,12 +42,17 @@ router.get(
 );
 //!IDS Work
 router.get(
-  '/profile/:id',
+  '/profile',
   auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   UserController.getSingleUser,
 );
+router.get(
+  '/others-profile/:id',
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  UserController.getOthersProfile,
+);
 router.patch(
-  '/edit-profile/:id',
+  '/edit-profile',
   auth(ENUM_USER_ROLE.USER),
   uploadFile(),
   UserController.updateProfile,

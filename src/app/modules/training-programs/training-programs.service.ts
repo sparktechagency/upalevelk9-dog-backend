@@ -11,7 +11,7 @@ const insertIntoDB = async (req: Request) => {
   //@ts-ignore
   if (files && files.image) {
     //@ts-ignore
-    image = files.image[0].path;
+    image = `/images/image/${files.image[0].filename}`;
   }
 
   const result = await Training.create({
@@ -51,7 +51,7 @@ const updateTraining = async (req: Request) => {
   //@ts-ignore
   if (files && files.image) {
     //@ts-ignore
-    image = files.image[0].path;
+    image = `/images/image/${files.image[0].filename}`;
   }
   const isExist = await Training.findById(id);
   if (!isExist) {

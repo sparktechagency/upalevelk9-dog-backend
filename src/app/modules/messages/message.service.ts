@@ -39,7 +39,8 @@ const sendMessage = async (req: Request) => {
     //@ts-ignore
     if (files && files?.image) {
       //@ts-ignore
-      image = files.image[0].path;
+
+      image = `/images/image/${files.image[0].filename}`;
     }
     const newMessage = new Message({
       senderId,

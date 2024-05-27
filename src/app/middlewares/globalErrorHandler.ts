@@ -12,6 +12,8 @@ import { ZodError } from 'zod';
 import { handleZodError } from '../../errors/handleZodError';
 import { handleCastError } from '../../errors/handleCastError';
 import ApiError from '../../errors/ApiError';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import httpStatus from 'http-status';
 
 const globalErrorHandler: ErrorRequestHandler = (
   error,
@@ -32,6 +34,24 @@ const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorMessages = simplifiedError.errorMessages;
+  } else if (error instanceof JsonWebTokenError) {
+    statusCode = 401;
+    message = 'Invalid token';
+    errorMessages = [
+      {
+        path: '',
+        message: error.message,
+      },
+    ];
+  } else if (error instanceof TokenExpiredError) {
+    statusCode = 401;
+    message = 'Token has expired';
+    errorMessages = [
+      {
+        path: '',
+        message: error.message,
+      },
+    ];
   } else if (error instanceof ZodError) {
     const simplifiedError = handleZodError(error);
     statusCode = simplifiedError.statusCode;
@@ -53,6 +73,16 @@ const globalErrorHandler: ErrorRequestHandler = (
           },
         ]
       : [];
+  } else if (error.code === 11000) {
+    statusCode = 409;
+    const field = Object.keys(error.keyValue)[0];
+    (message = `${field} must be unique`),
+      (errorMessages = [
+        {
+          path: field,
+          message: `${field} must be unique`,
+        },
+      ]);
   } else if (error instanceof Error) {
     message = error?.message;
     errorMessages = error?.message

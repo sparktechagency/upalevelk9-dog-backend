@@ -13,14 +13,14 @@ export type IRegistration = {
   email: string;
   password: string;
   avatar?: string;
+  phone_number: string;
 };
 export type IActivationToken = {
   token: string;
-
   activationCode: string;
 };
 export type IActivationRequest = {
-  activation_token: string;
+  userEmail: string;
   activation_code: string;
 };
 export type IReqUser = {
@@ -60,7 +60,10 @@ export type IUser = {
   plan_type: 'free' | 'basic' | 'gold' | 'premium';
   is_block: boolean;
   verifyCode: any;
+  activationCode: any;
   verifyExpire: Date | any;
+  isActive: boolean;
+  expirationTime: Date;
 };
 export type UserModel = {
   isUserExist(

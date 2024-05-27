@@ -1,7 +1,7 @@
 import { Request, RequestHandler, Response } from 'express';
 import { UserService } from './user.service';
 import sendResponse from '../../../shared/sendResponse';
-import { IUser } from './user.interface';
+import { IReqUser, IUser } from './user.interface';
 import catchAsync from '../../../shared/catchasync';
 import config from '../../../config';
 import {
@@ -17,17 +17,12 @@ const registrationUser: RequestHandler = catchAsync(
       statusCode: 200,
       success: true,
       message: `Please check your email: ${result?.user?.email} to active your account`,
-      activationToken: result.activationToken,
     });
   },
 );
 const activateUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const activation_token = req.headers.authorization;
-    const result = await UserService.activateUser(
-      req.body,
-      activation_token as any,
-    );
+    const result = await UserService.activateUser(req.body);
     const { refreshToken } = result;
     // set refresh token into cookie
     const cookieOptions = {
@@ -46,20 +41,6 @@ const activateUser: RequestHandler = catchAsync(
   },
 );
 
-const resendActivationCode: RequestHandler = catchAsync(
-  async (req: Request, res: Response) => {
-    const data = req.body;
-
-    const result = await UserService.resendActivationCode(data);
-
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: 'Resend successfully',
-      data: result,
-    });
-  },
-);
 const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { ...userData } = req.body;
@@ -85,8 +66,16 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const result = await UserService.getSingleUser(id);
+  const result = await UserService.getSingleUser(req.user as IReqUser);
+  sendResponse<IUser>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User retrieved successfully',
+    data: result,
+  });
+});
+const getOthersProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getOthersProfile(req.params.id);
   sendResponse<IUser>(res, {
     statusCode: 200,
     success: true,
@@ -150,8 +139,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const result = await UserService.updateProfile(id, req);
+  const result = await UserService.updateProfile(req);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -174,6 +162,21 @@ const checkIsValidForgetActivationCode = catchAsync(
       statusCode: 200,
       success: true,
       message: 'Success!',
+      data: result,
+    });
+  },
+);
+
+const resendActivationCode: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const data = req.body;
+
+    const result = await UserService.resendActivationCode(data);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Resend successfully',
       data: result,
     });
   },
@@ -212,4 +215,5 @@ export const UserController = {
   deleteMyAccount,
   checkIsValidForgetActivationCode,
   resendActivationCode,
+  getOthersProfile,
 };

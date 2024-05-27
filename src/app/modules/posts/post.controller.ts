@@ -19,7 +19,18 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'Post retrieved successfully',
+    message: 'My Post retrieved successfully',
+    data: result.data,
+    meta: result.meta,
+  });
+});
+const Posts = catchAsync(async (req: Request, res: Response) => {
+  const result = await PostService.Posts(req.query);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Community Post retrieved successfully',
     data: result.data,
     meta: result.meta,
   });
@@ -77,4 +88,5 @@ export const PostController = {
   updatePost,
   addComment,
   deleteComment,
+  Posts,
 };

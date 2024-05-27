@@ -2,16 +2,6 @@ import { z } from 'zod';
 
 const post = z.object({
   body: z.object({
-    user: z.string({
-      required_error: 'user is required',
-    }),
-
-    title: z
-      .string({
-        required_error: 'Title is required',
-      })
-      .min(1)
-      .max(100),
     description: z
       .string({
         required_error: 'description is required',
