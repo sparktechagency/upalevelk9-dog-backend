@@ -1,4 +1,6 @@
+import QueryBuilder from '../../../builder/QueryBuilder';
 import ApiError from '../../../errors/ApiError';
+import { IReqUser } from '../user/user.interface';
 import { ISchedule } from './schedule.interface';
 import { Schedule } from './schedule.model';
 
@@ -12,11 +14,29 @@ export const insertIntoDB = async (payload: ISchedule) => {
 const allSchedule = async () => {
   return await Schedule.find();
 };
-const mySchedule = async (id: string) => {
-  const schedule = await Schedule.findOne({
-    users: { $all: [id] },
-  }).populate('users');
-  return schedule;
+const mySchedule = async (user: IReqUser, query: Record<string, unknown>) => {
+  const userId = user?.userId;
+  // const schedule = await Schedule.findOne({
+  //   users: { $all: [userId] },
+  // }).populate('users');
+  // return schedule;
+  const postQuery = new QueryBuilder(
+    Schedule.find({ users: { $all: [userId] } }).populate('users'),
+    query,
+  )
+    .search(['title'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await postQuery.modelQuery;
+  const meta = await postQuery.countTotal();
+
+  return {
+    meta,
+    data: result,
+  };
 };
 const deleteSchedule = async (id: string) => {
   const isExist = await Schedule.findById(id);
