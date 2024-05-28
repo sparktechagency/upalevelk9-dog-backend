@@ -6,6 +6,7 @@ import User from '../user/user.model';
 import ApiError from '../../../errors/ApiError';
 import { io } from '../../../socket/socket';
 import httpStatus from 'http-status';
+import { IReqUser } from '../user/user.interface';
 
 //! One to one conversation
 // const sendMessage = async (req: Request) => {
@@ -120,44 +121,38 @@ const sendMessage = async (req: Request) => {
 };
 //!
 const getMessages = async (req: Request, res: Response) => {
-  try {
-    const { id: conversationId } = req.params;
-    // const senderId = req.user?.userId;
+  const senderId = req.user?.userId;
 
-    const conversation = await Conversation.findOne({
-      _id: conversationId,
-    }).populate('messages');
+  const conversation = await Conversation.findOne({
+    participants: { $all: [senderId] },
+    isGroup: false,
+  }).populate('messages');
 
-    if (!conversation) return res.status(200).json([]);
+  if (!conversation) return res.status(200).json([]);
 
-    const messages = conversation.messages;
-    io.emit('getMessages', messages);
-    return messages;
-  } catch (error) {
-    //@ts-ignore
-    console.log('Error in getMessages controller: ', error.message);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+  const messages = conversation.messages;
+  // io.emit('getMessages', messages);
+  return messages;
 };
 //!
 const conversationUser = async (req: Request) => {
-  const { id } = req.params;
+  const { userId } = req.user as IReqUser;
 
   // Check if the user exists
-  const isUserExist = await User.findById(id);
+  const isUserExist = await User.findById(userId);
   if (!isUserExist) {
     throw new ApiError(404, 'User does not exist');
   }
 
   // Find conversations that include the user
   const result = await Conversation.find({
-    participants: { $all: [id] },
+    participants: { $all: [userId] },
   });
 
   // Filter out the current user from participants in each conversation
   const participantIds = result
     .map(conversation =>
-      conversation.participants.filter(user => user.toString() !== id),
+      conversation.participants.filter(user => user.toString() !== userId),
     )
     .flat();
 

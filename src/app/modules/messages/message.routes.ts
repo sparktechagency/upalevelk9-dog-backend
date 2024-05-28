@@ -13,12 +13,12 @@ router.post(
   messageController.sendMessage,
 );
 router.get(
-  '/get-conversation/:id',
+  '/get-conversation',
   auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   messageController.conversationUser,
 );
 router.get(
-  '/get-message/:id',
+  '/get-message',
   auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   messageController.getMessages,
 );
