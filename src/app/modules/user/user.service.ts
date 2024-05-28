@@ -178,8 +178,9 @@ const getSingleUser = async (user: IReqUser) => {
   }
   const posts = await Post.find({ user: user?.userId });
   const schedule = await Schedule.find({
-    users: { $elemMatch: { userId: user?.userId } },
+    users: { $in: [user?.userId] },
   });
+
   return {
     userInfo: result,
     posts,

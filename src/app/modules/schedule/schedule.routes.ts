@@ -12,7 +12,7 @@ router.post(
 );
 router.get('/all', auth(ENUM_USER_ROLE.ADMIN), ScheduleController.allSchedule);
 router.get(
-  '/my-schedule/:id',
+  '/my-schedule',
   auth(ENUM_USER_ROLE.USER),
   ScheduleController.mySchedule,
 );
