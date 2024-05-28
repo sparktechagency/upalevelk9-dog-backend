@@ -1,4 +1,5 @@
 import ApiError from '../../../errors/ApiError';
+import Notification from '../notifications/notifications.model';
 import { PromoPackage } from '../promo-package/promo-package.model';
 import User from '../user/user.model';
 import { IPromo } from './promo.inrerface';
@@ -24,6 +25,13 @@ const insertIntoDB = async (payload: IPromo) => {
   if (promo_code !== isExistPackage.promo_code) {
     throw new ApiError(500, 'Invalid promo code');
   }
+  const notification = new Notification({
+    user: user,
+    title: 'Promo Package Unlocked',
+    message: `You have successfully unlocked the promo package: ${isExistPackage.title}.`,
+    status: 'unread',
+  });
+  await notification.save();
   return await Promo.create(payload);
 };
 

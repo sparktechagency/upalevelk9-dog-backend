@@ -91,21 +91,33 @@ const sendMessage = async (req: Request) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
   }
   let image = undefined;
-
+  let messageType = '';
   //@ts-ignore
   if (files && files?.image) {
     //@ts-ignore
-
     image = `/images/image/${files.image[0].filename}`;
+  }
+  //@ts-ignore
+  if (!message && files && files?.image) {
+    messageType = 'image';
+  }
+  //@ts-ignore
+  if (message && !files?.image) {
+    messageType = 'text';
+  }
+  //@ts-ignore
+  if (message && files?.image) {
+    messageType = 'both';
   }
   const newMessage = new Message({
     senderId,
     message,
     conversationId: conversation._id,
     image,
+    messageType,
   });
 
-  await (await newMessage.populate('senderId')).populate('conversationId');
+  // await (await newMessage.populate('senderId')).populate('conversationId');
 
   if (newMessage) {
     conversation.messages.push(newMessage._id);

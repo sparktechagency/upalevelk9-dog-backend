@@ -5,6 +5,7 @@ import ApiError from '../../../errors/ApiError';
 import { IPost } from './post.interface';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import { IReqUser } from '../user/user.interface';
+import Notification from '../notifications/notifications.model';
 
 //! Add a post
 const createPost = async (req: Request) => {
@@ -28,6 +29,14 @@ const createPost = async (req: Request) => {
     user: user?.userId,
     ...data,
   });
+  // Create a notification after creating the post
+  const notification = new Notification({
+    user: user?.userId,
+    title: 'New Post Created',
+    message: 'Your new post has been created successfully.',
+  });
+
+  await notification.save();
   return result;
 };
 //! Get my posts
@@ -147,7 +156,15 @@ async function addComment(req: Request) {
 
   //@ts-ignore
   post.comments.push({ user: userId, content });
-  await post.save();
+  // Create a notification after adding the comment
+  const notification = new Notification({
+    user: post.user,
+    title: 'New Comment Added',
+    message: 'Someone has commented on your post.',
+    status: 'unread',
+  });
+
+  await Promise.all([notification.save(), post.save()]);
   return post;
 }
 //! Controller function to delete a comment from a blog post

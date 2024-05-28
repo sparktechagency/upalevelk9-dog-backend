@@ -34,24 +34,6 @@ const insertIntoDB = async (req: Request) => {
     video,
     ...body,
   });
-  // const loggedInUsers = await User.find({});
-
-  // // Send notifications to all logged-in users
-  // const notifications: INotification[] = loggedInUsers.map(
-  //   (user: { _id: any }) => ({
-  //     user: user._id,
-  //     title: `New Article: ${body.article_title}`,
-  //     message: `A new article titled "${body.article_title}" has been posted. Check it out!`,
-  //     status: 'unread',
-  //   }),
-  // );
-
-  // try {
-  //   await Notification.insertMany(notifications);
-  //   console.log('Notifications sent successfully');
-  // } catch (error) {
-  //   console.error('Failed to send notifications', error);
-  // }
 
   return result;
 };
