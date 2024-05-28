@@ -22,6 +22,7 @@ const getMessages: RequestHandler = catchAsync(
     sendResponse(res, {
       statusCode: 200,
       success: true,
+      message: 'Message retrieved successful',
       data: result,
     });
   },
