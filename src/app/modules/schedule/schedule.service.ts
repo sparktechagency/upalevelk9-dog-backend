@@ -1,14 +1,44 @@
 import QueryBuilder from '../../../builder/QueryBuilder';
 import ApiError from '../../../errors/ApiError';
+import Notification from '../notifications/notifications.model';
 import { IReqUser } from '../user/user.interface';
+import User from '../user/user.model';
 import { ISchedule } from './schedule.interface';
 import { Schedule } from './schedule.model';
 
-export const insertIntoDB = async (payload: ISchedule) => {
-  if (!payload.meet_link || !payload.password) {
-    throw new ApiError(500, 'Meet link and password is required');
+const insertIntoDB = async (payload: ISchedule) => {
+  if (!payload.meet_link || !payload.password || !payload.date) {
+    throw new ApiError(500, 'Meet link, date, and password are required');
   }
-  return await Schedule.create(payload);
+
+  let userIds = [];
+
+  if (payload.users) {
+    userIds = payload.users;
+
+    // Find users based on payload.users array
+    const users = await User.find({ _id: { $in: userIds } });
+
+    if (users.length !== userIds.length) {
+      throw new ApiError(404, 'Some users not found');
+    }
+
+    // Create notifications for each user
+    const notifications = users.map(user => ({
+      user: user._id,
+      title: 'New Schedule Created',
+      message: 'A new schedule has been created for you.',
+      status: 'unread',
+    }));
+
+    // Save notifications
+    await Notification.insertMany(notifications);
+  }
+
+  // Create the schedule in the database
+  const schedule = await Schedule.create(payload);
+
+  return schedule;
 };
 
 const allSchedule = async () => {

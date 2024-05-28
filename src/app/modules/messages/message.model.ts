@@ -7,11 +7,7 @@ const messageSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    // receiverId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'User',
-    //   required: true,
-    // },
+
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Conversation',
@@ -23,6 +19,10 @@ const messageSchema = new mongoose.Schema(
 
     message: {
       type: String,
+    },
+    messageType: {
+      type: String,
+      enum: ['text', 'image', 'both'],
       required: true,
     },
   },

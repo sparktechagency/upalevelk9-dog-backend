@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import ApiError from '../../../errors/ApiError';
-import { IPromo, IPromoItem } from './promo-package.interface';
+import { IPromoItem, IPromoPackage } from './promo-package.interface';
 import { PromoPackage } from './promo-package.model';
 
 //! Admin Management Start
-const addPromo = async (payload: IPromo) => {
+const addPromo = async (payload: IPromoPackage) => {
   const checkIsExist = await PromoPackage.findOne({ title: payload.title });
   if (checkIsExist) {
     throw new ApiError(404, 'Promo already exist');
