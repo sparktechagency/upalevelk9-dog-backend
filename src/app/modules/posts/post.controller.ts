@@ -25,6 +25,7 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const Posts = catchAsync(async (req: Request, res: Response) => {
+  console.log(req.user);
   const result = await PostService.Posts(req.query);
 
   sendResponse(res, {

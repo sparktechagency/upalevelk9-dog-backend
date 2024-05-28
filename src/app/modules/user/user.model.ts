@@ -49,6 +49,9 @@ const UserSchema = new Schema<IUser, UserModel>(
       enum: ['male', 'female', 'others'],
       // required: true,
     },
+    age: {
+      type: String,
+    },
     profile_image: {
       type: String,
       default:

@@ -64,6 +64,7 @@ export type IUser = {
   verifyExpire: Date | any;
   isActive: boolean;
   expirationTime: Date;
+  age: string;
 };
 export type UserModel = {
   isUserExist(

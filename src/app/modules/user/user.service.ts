@@ -37,6 +37,8 @@ import { logger } from '../../../shared/logger';
 import Post from '../posts/post.model';
 import { IPost } from '../posts/post.interface';
 import { Schedule } from '../schedule/schedule.model';
+import Admin from '../admin/admin.model';
+import Conversation from '../messages/conversation.model';
 
 //!
 //!
@@ -98,8 +100,22 @@ const activateUser = async (payload: IActivationRequest) => {
       runValidators: true,
     },
   )) as IUser;
-  user.activationCode = null;
+  user.activationCode = '';
   await user.save();
+
+  const adminIds = await Admin.find({}).distinct('_id');
+  // Filter out duplicate admin IDs
+  const uniqueAdminIds = adminIds.filter(
+    (id, index) => adminIds.indexOf(id) === index,
+  );
+  // Merge user ID and unique admin IDs
+  const participants = [user._id, ...uniqueAdminIds];
+
+  const conversation = new Conversation({
+    participants,
+  });
+
+  await conversation.save();
   const accessToken = jwtHelpers.createToken(
     { userId: existUser._id, role: existUser.role },
     config.jwt.secret as Secret,

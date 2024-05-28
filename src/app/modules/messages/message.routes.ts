@@ -7,7 +7,7 @@ import { uploadFile } from '../../middlewares/fileUploader';
 const router = express.Router();
 
 router.post(
-  '/send-message/:id', //here id is receiver id
+  '/send-message',
   auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   uploadFile(),
   messageController.sendMessage,

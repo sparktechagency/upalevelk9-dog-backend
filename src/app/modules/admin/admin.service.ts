@@ -25,6 +25,7 @@ import { sendResetEmail } from '../auth/sendResetMails';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import sendEmail from '../../../utils/sendEmail';
 import { registrationSuccess } from './admi.email';
+import Conversation from '../messages/conversation.model';
 
 //!
 const registrationUser = async (payload: IRegistration) => {
@@ -41,6 +42,16 @@ const registrationUser = async (payload: IRegistration) => {
   }
   const newUser = await Admin.create(payload);
   const data = { user: { name: user.name } };
+  const adminIds = await Admin.find({}).distinct('_id');
+  // Filter out duplicate admin IDs
+  const uniqueAdminIds = adminIds.filter(
+    (id, index) => adminIds.indexOf(id) === index,
+  );
+  await Conversation.updateMany(
+    {},
+    { $addToSet: { participants: { $each: uniqueAdminIds } } },
+  );
+
   sendEmail({
     email: user.email,
     subject: 'Congratulations to register successfully',
@@ -82,26 +93,11 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
   if (!result) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  const updatedResult = {
-    ...result.toObject(),
-    profile_image: updateImageUrl(result.profile_image).replace(/\\/g, '/'),
-    cover_image: updateImageUrl(result.cover_image).replace(/\\/g, '/'),
-  };
-  return updatedResult;
+  return result;
 };
 const getAllAdmin = async () => {
   const results = await Admin.find({}).lean();
-  const updatedResults = results.map(result => {
-    if (result) {
-      const updatedResult = {
-        ...result,
-        profile_image: updateImageUrl(result.profile_image).replace(/\\/g, '/'),
-      };
-      return updatedResult;
-    }
-    return result;
-  });
-  return updatedResults;
+  return results;
 };
 //!
 const updateAdmin = async (

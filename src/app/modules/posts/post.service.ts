@@ -32,7 +32,15 @@ const createPost = async (req: Request) => {
 };
 //! Get my posts
 const getMyPosts = async (user: IReqUser, query: Record<string, unknown>) => {
-  const postQuery = new QueryBuilder(Post.find({ user: user?.userId }), query)
+  const postQuery = new QueryBuilder(
+    Post.find({ user: user?.userId })
+      .populate('user')
+      .populate({
+        path: 'comments',
+        populate: [{ path: 'user', select: 'name profile_image' }],
+      }),
+    query,
+  )
     .search(['title'])
     .filter()
     .sort()
@@ -49,7 +57,15 @@ const getMyPosts = async (user: IReqUser, query: Record<string, unknown>) => {
 };
 //! Community Post
 const Posts = async (query: Record<string, unknown>) => {
-  const postQuery = new QueryBuilder(Post.find({}).populate('user'), query)
+  const postQuery = new QueryBuilder(
+    Post.find({})
+      .populate('user')
+      .populate({
+        path: 'comments',
+        populate: [{ path: 'user', select: 'name profile_image' }],
+      }),
+    query,
+  )
     .search(['title'])
     .filter()
     .sort()
@@ -66,10 +82,16 @@ const Posts = async (query: Record<string, unknown>) => {
 };
 //! Single Post
 const singlePost = async (id: string) => {
-  const result = await Post.findById(id);
+  const result = await Post.findById(id)
+    .populate('user')
+    .populate({
+      path: 'comments',
+      populate: [{ path: 'user', select: 'name profile_image' }],
+    });
   if (!result) {
     throw new ApiError(404, 'Post not found');
   }
+
   return result;
 };
 //! Delete Post
@@ -84,7 +106,7 @@ const deletePost = async (id: string) => {
 const updatePost = async (id: string, req: Request) => {
   const { files } = req;
   const data = req?.body;
-  const post = await Post.findById(id);
+  const post = await Post.findById(id).populate('user');
   if (!post) {
     throw new ApiError(404, 'Post not found');
   }
