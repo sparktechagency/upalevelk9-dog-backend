@@ -259,11 +259,11 @@ const deleteUser = async (id: string): Promise<IUser | null> => {
   return result;
 };
 //!
-const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
+const loginUser = async (payload: ILoginUser) => {
   const { email, password } = payload;
 
   const isUserExist = (await User.isUserExist(email)) as IUser;
-
+  const checkUser = await User.findOne({ email });
   if (!isUserExist) {
     throw new ApiError(404, 'User does not exist');
   }
@@ -295,6 +295,7 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   );
 
   return {
+    id: checkUser?._id,
     accessToken,
     refreshToken,
   };

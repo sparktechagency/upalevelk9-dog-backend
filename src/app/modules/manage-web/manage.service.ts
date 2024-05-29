@@ -15,7 +15,7 @@ const addPrivacyPolicy = async (payload: any) => {
   return await PrivacyPolicy.create(payload);
 };
 const getPrivacyPolicy = async () => {
-  return await PrivacyPolicy.find({});
+  return await PrivacyPolicy.findOne();
 };
 const editPrivacyPolicy = async (
   id: string,
@@ -43,7 +43,7 @@ const addAboutUs = async (payload: any) => {
   return await AboutUs.create(payload);
 };
 const getAboutUs = async () => {
-  return await AboutUs.find({});
+  return await AboutUs.findOne();
 };
 const editAboutUs = async (id: string, payload: { description: string }) => {
   const isExist = await AboutUs.findById(id);
@@ -68,7 +68,7 @@ const addTermsConditions = async (payload: any) => {
   return await TermsConditions.create(payload);
 };
 const getTermsConditions = async () => {
-  return await TermsConditions.find({});
+  return await TermsConditions.findOne();
 };
 const editTermsConditions = async (
   id: string,
@@ -97,7 +97,7 @@ const addContactUs = async (payload: any) => {
   return await ContactUs.create(payload);
 };
 const getContactUs = async () => {
-  return await ContactUs.find({});
+  return await ContactUs.findOne();
 };
 const editContactUs = async (id: string, payload: { description: string }) => {
   const isExist = await ContactUs.findById(id);
