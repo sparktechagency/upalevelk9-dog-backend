@@ -125,8 +125,10 @@ const sendMessage = async (req: Request) => {
   await Promise.all([conversation.save(), newMessage.save()]);
 
   if (conversation && newMessage) {
+    // console.log('Sending..',senderId);
     //@ts-ignore
-    io.to(conversation?._id).emit('getMessage', newMessage);
+    // io.to(senderId).emit('getMessage', newMessage);
+    io.emit('getMessage', newMessage);
   }
 
   return newMessage;
@@ -134,17 +136,38 @@ const sendMessage = async (req: Request) => {
 //!
 const getMessages = async (req: Request, res: Response) => {
   const senderId = req.user?.userId;
-
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
   const conversation = await Conversation.findOne({
     participants: { $all: [senderId] },
     isGroup: false,
-  }).populate('messages');
+  }).populate({
+    path: 'messages',
+    options: { sort: { createdAt: -1 } },
+    skip: skip,
+    limit: limit,
+  });
 
-  if (!conversation) return res.status(200).json([]);
-
+  if (!conversation)
+    return res.status(200).json({
+      messages: [],
+      currentPage: page,
+      limit: limit,
+      totalPages: 0,
+    });
+  // const totalMessages = conversation.messages.length;
+  // const totalPages = Math.ceil(totalMessages / limit);
   const messages = conversation.messages;
   // io.emit('getMessages', messages);
-  return messages;
+  return {
+    messages,
+    meta: {
+      page,
+      limit,
+      // totalPages,
+    },
+  };
 };
 //!
 const conversationUser = async (req: Request) => {
