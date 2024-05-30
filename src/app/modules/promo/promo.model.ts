@@ -11,7 +11,7 @@ const promoSchema = new Schema<IPromo>(
     },
     promo: {
       type: Schema.Types.ObjectId,
-      ref: 'Promo',
+      ref: 'PromoPackage',
       required: true,
     },
 

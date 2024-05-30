@@ -30,6 +30,7 @@ const auth =
 
         //set user to headers
         req.user = verifyUser;
+
         const isExist = await User.findById(verifyUser?.userId);
         const checkAdmin = await Admin.findById(verifyUser?.userId);
         if (verifyUser.role === 'user' && !isExist) {

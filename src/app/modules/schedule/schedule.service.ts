@@ -28,7 +28,7 @@ const insertIntoDB = async (payload: ISchedule) => {
       user: user._id,
       title: 'New Schedule Created',
       message: 'A new schedule has been created for you.',
-      status: 'unread',
+      status: false,
     }));
 
     // Save notifications

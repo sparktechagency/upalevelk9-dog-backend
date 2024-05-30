@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import Notification from './notifications.model';
 import ApiError from '../../../errors/ApiError';
+import { IReqUser } from '../user/user.interface';
 
 //Get
 const getNotifications = async () => {
@@ -14,7 +15,7 @@ const updateNotification = async (req: Request) => {
     throw new ApiError(404, 'Notification not found');
   } else {
     // eslint-disable-next-line no-unused-expressions
-    notification.status ? (notification.status = 'read') : notification?.status;
+    notification.status ? (notification.status = true) : notification?.status;
   }
   await notification.save();
   const notifications = await Notification.find().sort({
@@ -22,12 +23,21 @@ const updateNotification = async (req: Request) => {
   });
   return notifications;
 };
-const myNotification = async (id: string) => {
-  return await Notification.find({ user: id });
+const updateAll = async () => {
+  const result = await Notification.updateMany(
+    { status: false },
+    { $set: { status: true } },
+    { new: true },
+  );
+  return result;
+};
+const myNotification = async (user: IReqUser) => {
+  return await Notification.find({ user: user.userId });
 };
 
 export const NotificationService = {
   getNotifications,
   updateNotification,
   myNotification,
+  updateAll,
 };

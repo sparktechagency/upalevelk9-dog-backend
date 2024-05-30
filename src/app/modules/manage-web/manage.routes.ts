@@ -42,7 +42,11 @@ router.get(
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
   ManageController.getSlider,
 );
-router.get('/get-faq', auth(ENUM_USER_ROLE.ADMIN), ManageController.getFAQ);
+router.get(
+  '/get-faq',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  ManageController.getFAQ,
+);
 router.get(
   '/get-about-us',
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),

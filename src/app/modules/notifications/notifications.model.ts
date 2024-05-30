@@ -16,8 +16,8 @@ const notificationSchema = new Schema<INotification>(
       required: true,
     },
     status: {
-      type: String,
-      default: 'unread',
+      type: Boolean,
+      default: false,
     },
   },
   {

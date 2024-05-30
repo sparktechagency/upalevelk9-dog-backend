@@ -131,6 +131,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 const changePassword = catchAsync(async (req: Request, res: Response) => {
   const { ...passwordData } = req.body;
   const user = req.user;
+  // console.log(user, passwordData, 'user, passwordData');
   await UserService.changePassword(user, passwordData);
   sendResponse<ILoginUserResponse>(res, {
     statusCode: 200,
