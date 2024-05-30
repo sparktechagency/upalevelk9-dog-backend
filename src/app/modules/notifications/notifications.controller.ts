@@ -2,6 +2,7 @@ import { Request, RequestHandler, Response } from 'express';
 import sendResponse from '../../../shared/sendResponse';
 import catchAsync from '../../../shared/catchasync';
 import { NotificationService } from './notifications.service';
+import { IReqUser } from '../user/user.interface';
 
 //get notification only for admin
 const getNotifications: RequestHandler = catchAsync(
@@ -27,9 +28,22 @@ const updateNotification: RequestHandler = catchAsync(
     });
   },
 );
+const updateAll: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await NotificationService.updateAll();
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: `Notification updated successfully`,
+      data: result,
+    });
+  },
+);
 const myNotification: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await NotificationService.myNotification(req.params.id);
+    const result = await NotificationService.myNotification(
+      req.user as IReqUser,
+    );
     sendResponse(res, {
       statusCode: 200,
       success: true,
@@ -43,4 +57,5 @@ export const NotificationController = {
   getNotifications,
   updateNotification,
   myNotification,
+  updateAll,
 };

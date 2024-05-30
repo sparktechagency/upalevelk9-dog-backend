@@ -4,6 +4,6 @@ import { IUser } from '../user/user.interface';
 export type INotification = {
   title: string;
   message: string;
-  status: string;
+  status: boolean;
   user: Types.ObjectId | IUser;
 };

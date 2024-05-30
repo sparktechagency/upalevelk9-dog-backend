@@ -161,7 +161,7 @@ async function addComment(req: Request) {
     user: post.user,
     title: 'New Comment Added',
     message: 'Someone has commented on your post.',
-    status: 'unread',
+    status: false,
   });
 
   await Promise.all([notification.save(), post.save()]);

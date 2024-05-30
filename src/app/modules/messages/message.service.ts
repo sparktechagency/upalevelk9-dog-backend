@@ -117,16 +117,12 @@ const sendMessage = async (req: Request) => {
     messageType,
   });
 
-  // await (await newMessage.populate('senderId')).populate('conversationId');
-
   if (newMessage) {
     conversation.messages.push(newMessage._id);
   }
   await Promise.all([conversation.save(), newMessage.save()]);
 
   if (conversation && newMessage) {
-    // console.log('Sending..',senderId);
-    //@ts-ignore
     // io.to(senderId).emit('getMessage', newMessage);
     io.emit('getMessage', newMessage);
   }
@@ -139,12 +135,20 @@ const getMessages = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const skip = (page - 1) * limit;
+  const totalMessages = await Conversation.findOne({
+    participants: { $all: [senderId] },
+    isGroup: false,
+  });
+  if (!totalMessages) {
+    return [];
+  }
   const conversation = await Conversation.findOne({
     participants: { $all: [senderId] },
     isGroup: false,
   }).populate({
     path: 'messages',
     options: { sort: { createdAt: -1 } },
+    //@ts-ignore
     skip: skip,
     limit: limit,
   });
@@ -156,8 +160,9 @@ const getMessages = async (req: Request, res: Response) => {
       limit: limit,
       totalPages: 0,
     });
-  // const totalMessages = conversation.messages.length;
-  // const totalPages = Math.ceil(totalMessages / limit);
+  const total = totalMessages?.messages.length;
+
+  const totalPage = Math.ceil(total / limit);
   const messages = conversation.messages;
   // io.emit('getMessages', messages);
   return {
@@ -165,7 +170,7 @@ const getMessages = async (req: Request, res: Response) => {
     meta: {
       page,
       limit,
-      // totalPages,
+      totalPage,
     },
   };
 };

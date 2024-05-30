@@ -382,7 +382,7 @@ const changePassword = async (
     throw new ApiError(402, 'Old password is incorrect');
   }
   isUserExist.password = newPassword;
-  isUserExist.save();
+  await isUserExist.save();
 };
 
 //!

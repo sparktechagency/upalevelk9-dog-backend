@@ -4,7 +4,7 @@ import { PromoService } from './promo.service';
 import sendResponse from '../../../shared/sendResponse';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
-  const result = await PromoService.insertIntoDB(req.body);
+  const result = await PromoService.insertIntoDB(req);
   sendResponse(res, {
     statusCode: 200,
     success: true,
