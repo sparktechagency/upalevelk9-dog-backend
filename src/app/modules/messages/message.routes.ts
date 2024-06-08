@@ -18,8 +18,8 @@ router.get(
   messageController.conversationUser,
 );
 router.get(
-  '/get-message',
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  '/get-message/:id',
+  // auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   messageController.getMessages,
 );
 

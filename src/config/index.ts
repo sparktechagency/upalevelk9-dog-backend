@@ -40,4 +40,7 @@ export default {
     from_email: process.env.FORM_EMAIL,
     api_key: process.env.SEND_GRIDAPI_KEY,
   },
+  stripe: {
+    stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  },
 };

@@ -6,4 +6,6 @@ export type IPromo = {
   promo_code: string;
   promo: Types.ObjectId | IPromo;
   user: Types.ObjectId | IUser;
+  startDate: Date;
+  endDate: Date;
 };

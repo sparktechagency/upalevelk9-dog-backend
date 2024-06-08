@@ -28,11 +28,11 @@ const updateAll = async () => {
     { status: false },
     { $set: { status: true } },
     { new: true },
-  );
+  ).sort({ createdAt: -1 });
   return result;
 };
 const myNotification = async (user: IReqUser) => {
-  return await Notification.find({ user: user.userId });
+  return await Notification.find({ user: user.userId }).sort({ createdAt: -1 });
 };
 
 export const NotificationService = {

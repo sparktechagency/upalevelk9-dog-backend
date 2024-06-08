@@ -14,7 +14,14 @@ const promoSchema = new Schema<IPromo>(
       ref: 'PromoPackage',
       required: true,
     },
-
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
     promo_code: {
       type: String,
       required: true,

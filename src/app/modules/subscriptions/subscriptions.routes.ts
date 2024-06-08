@@ -13,4 +13,10 @@ router.post(
   validateRequest(SubscriptionsValidation.post),
   SubscriptionController.upgradeSubscription,
 );
+router.get(
+  '/my-plan',
+  auth(ENUM_USER_ROLE.USER),
+
+  SubscriptionController.mySubscription,
+);
 export const SubscriptionRoutes = router;

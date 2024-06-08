@@ -17,7 +17,14 @@ const sendMessage: RequestHandler = catchAsync(
 
 const getMessages: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await messageService.getMessages(req, res);
+    const conversationId = req.params.id;
+    const limit = req.query.limit;
+    const page = req.query.page;
+    const result = await messageService.getMessages(
+      conversationId,
+      page,
+      limit,
+    );
 
     sendResponse(res, {
       statusCode: 200,

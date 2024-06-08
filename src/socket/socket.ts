@@ -16,15 +16,8 @@ const initializeSocketIO = (server: any) => {
     console.log('connected', socket?.id);
 
     // Handle 'joinChat' event
-    socket.on('joinChat', (data: any) => {
-      console.log(data?.conversationId, 'conversationId');
-      socket.join(data?.conversationId);
-    });
-
-    // Handle 'message' event
-    socket.on('sendMessage', (messages: any) => {
-      console.log(messages, 'Message');
-      // io.to(conversationId).emit('getMessage', message);
+    socket.on('join-chat', (data: any) => {
+      socket.join(data?.id);
     });
 
     // Handle socket disconnection

@@ -3,19 +3,24 @@ import { Request } from 'express';
 import { SubscriptionPlan } from '../subscriptions-plan/subscriptions-plan.model';
 import ApiError from '../../../errors/ApiError';
 import { Subscription } from './subscriptions.model';
-import { Payment } from '../payment/payment.model';
+
+import User from '../user/user.model';
+import { IReqUser } from '../user/user.interface';
 
 const upgradeSubscription = async (req: Request) => {
   try {
     const { planId, transactionId, payment_status, payment_id } = req.body;
+    const checkUser = await User.findById(req?.user?.userId);
+
+    if (!checkUser) {
+      throw new ApiError(404, 'User not found');
+    }
+    checkUser.isPaid = true;
     const subscriptionPlan = await SubscriptionPlan.findById(planId);
     if (!subscriptionPlan) {
       throw new ApiError(404, 'Plan not found');
     }
-    const isPaid = await Payment.findById(payment_id);
-    if (!isPaid) {
-      throw new ApiError(404, 'Payment not found. Please payment first');
-    }
+
     const startDate = new Date();
     const endDate = new Date(
       startDate.getTime() + subscriptionPlan.duration * 24 * 60 * 60 * 1000,
@@ -30,7 +35,7 @@ const upgradeSubscription = async (req: Request) => {
       endDate,
       transactionId: transactionId,
     });
-
+    await checkUser.save();
     return subscription;
   } catch (error) {
     //@ts-ignore
@@ -39,7 +44,11 @@ const upgradeSubscription = async (req: Request) => {
     throw new Error(error?.message);
   }
 };
+const mySubscription = async (user: IReqUser) => {
+  return await Subscription.find({ user_id: user?.userId });
+};
 
 export const SubscriptionService = {
   upgradeSubscription,
+  mySubscription,
 };

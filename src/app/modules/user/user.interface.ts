@@ -65,6 +65,8 @@ export type IUser = {
   isActive: boolean;
   expirationTime: Date;
   age: string;
+  isPaid: boolean;
+  conversationId: string;
 };
 export type UserModel = {
   isUserExist(

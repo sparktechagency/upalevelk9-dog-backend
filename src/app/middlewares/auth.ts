@@ -13,10 +13,7 @@ const auth =
     try {
       const tokenWithBearer = req.headers.authorization;
       if (!tokenWithBearer) {
-        throw new ApiError(
-          httpStatus.UNAUTHORIZED,
-          'You are not authorized for this role',
-        );
+        throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
       }
 
       if (tokenWithBearer && tokenWithBearer.startsWith('Bearer')) {

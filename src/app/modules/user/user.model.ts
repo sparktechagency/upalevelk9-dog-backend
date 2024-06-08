@@ -27,8 +27,7 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     phone_number: {
       type: String,
-      // unique: true,
-      // sparse: true,
+
       required: true,
     },
     password: {
@@ -59,6 +58,12 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     cover_image: {
       type: String,
+      default:
+        'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHx8MA%3D%3D',
+    },
+    isPaid: {
+      type: Boolean,
+      default: false,
     },
     location: {
       type: String,
@@ -92,6 +97,9 @@ const UserSchema = new Schema<IUser, UserModel>(
     isActive: {
       type: Boolean,
       default: false,
+    },
+    conversationId: {
+      type: String,
     },
     plan_type: {
       type: String,
