@@ -13,6 +13,7 @@ import { ProgramArticleRoutes } from '../modules/program-article/program-article
 import { PromoPackageRoutes } from '../modules/promo-package/promo-package.routes';
 import { PromoRoutes } from '../modules/promo/promo.routes';
 import { FeedbackRoutes } from '../modules/feedback/feedback.routes';
+import { PaymentRoutes } from '../modules/payment/payment.routes';
 
 const router = express.Router();
 
@@ -72,6 +73,10 @@ const moduleRoutes = [
   {
     path: '/feedback',
     route: FeedbackRoutes,
+  },
+  {
+    path: '/payment',
+    route: PaymentRoutes,
   },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));

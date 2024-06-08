@@ -65,9 +65,9 @@ const getMyPosts = async (user: IReqUser, query: Record<string, unknown>) => {
   };
 };
 //! Community Post
-const Posts = async (query: Record<string, unknown>) => {
+const Posts = async (query: Record<string, unknown>, user: IReqUser) => {
   const postQuery = new QueryBuilder(
-    Post.find({})
+    Post.find({ user: { $ne: user?.userId } })
       .populate('user')
       .populate({
         path: 'comments',
@@ -91,7 +91,7 @@ const Posts = async (query: Record<string, unknown>) => {
 };
 //! Single Post
 const singlePost = async (id: string) => {
-  const result = await Post.findById(id)
+  const result = await Post.findOne({ _id: id })
     .populate('user')
     .populate({
       path: 'comments',
@@ -187,6 +187,7 @@ async function deleteComment(req: Request) {
   await posts.save();
   return posts;
 }
+
 export const PostService = {
   createPost,
   getMyPosts,

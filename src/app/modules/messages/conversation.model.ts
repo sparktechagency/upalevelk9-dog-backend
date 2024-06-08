@@ -15,13 +15,6 @@ const conversationSchema = new mongoose.Schema(
     groupName: {
       type: String,
     },
-    messages: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Message',
-        default: [],
-      },
-    ],
   },
   { timestamps: true },
 );

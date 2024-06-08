@@ -23,16 +23,21 @@ const insertIntoDB = async (req: Request) => {
     promo_code: promo_code,
     status: true,
   });
-  console.log(isExistPackage);
+
   if (!isExistPackage) {
     throw new ApiError(404, 'Package not found');
   }
+
   if (checkAlreadyUnlock && checkAlreadyUnlock.user == (user as any)) {
     throw new ApiError(500, 'You are already unlock this package');
   }
   if (promo_code !== isExistPackage.promo_code) {
     throw new ApiError(500, 'Invalid promo code');
   }
+  const startDate = new Date();
+  const endDate = new Date(
+    startDate.getTime() + isExistPackage.duration * 24 * 60 * 60 * 1000,
+  );
   const notification = new Notification({
     user: user,
     title: 'Promo Package Unlocked',
@@ -40,6 +45,8 @@ const insertIntoDB = async (req: Request) => {
     status: false,
   });
   payload.promo = isExistPackage._id;
+  payload.startDate = startDate;
+  payload.endDate = endDate;
   payload.user = user as any;
   await notification.save();
   return await Promo.create(payload);

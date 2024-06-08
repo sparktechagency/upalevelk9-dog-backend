@@ -14,8 +14,8 @@ const subscriptionSchema = new Schema<ISubscription>(
       required: true,
     },
     payment_id: {
-      type: Schema.Types.ObjectId,
-      ref: 'Payment',
+      type: String,
+
       required: true,
     },
     startDate: {

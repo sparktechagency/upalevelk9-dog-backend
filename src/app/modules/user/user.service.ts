@@ -100,9 +100,6 @@ const activateUser = async (payload: IActivationRequest) => {
       runValidators: true,
     },
   )) as IUser;
-  user.activationCode = '';
-  await user.save();
-
   const adminIds = await Admin.find({}).distinct('_id');
   // Filter out duplicate admin IDs
   const uniqueAdminIds = adminIds.filter(
@@ -116,8 +113,17 @@ const activateUser = async (payload: IActivationRequest) => {
   });
 
   await conversation.save();
+  existUser.activationCode = '';
+  user.conversationId = conversation?._id.toString();
+  await user.save();
+  await existUser.save();
+
   const accessToken = jwtHelpers.createToken(
-    { userId: existUser._id, role: existUser.role },
+    {
+      userId: existUser._id,
+      conversationId: conversation._id,
+      role: existUser.role,
+    },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string,
   );
@@ -131,6 +137,7 @@ const activateUser = async (payload: IActivationRequest) => {
     accessToken,
     refreshToken,
     user,
+    conversationId: conversation?._id,
   };
 };
 
@@ -283,7 +290,7 @@ const loginUser = async (payload: ILoginUser) => {
 
   const { _id: userId, role } = isUserExist;
   const accessToken = jwtHelpers.createToken(
-    { userId, role },
+    { userId, role, conversationId: checkUser?.conversationId },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string,
   );
@@ -296,6 +303,8 @@ const loginUser = async (payload: ILoginUser) => {
 
   return {
     id: checkUser?._id,
+    conversationId: checkUser?.conversationId,
+    isPaid: checkUser?.isPaid,
     accessToken,
     refreshToken,
   };

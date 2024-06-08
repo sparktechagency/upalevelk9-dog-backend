@@ -14,7 +14,10 @@ const promoSchema = new Schema<IPromoPackage>(
         },
       },
     ],
-
+    duration: {
+      type: Number,
+      default: 12,
+    },
     status: {
       type: Boolean,
       default: true,

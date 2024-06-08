@@ -15,15 +15,14 @@ const create = z.object({
         required_error: 'Email is required',
       })
       .email('Invalid email format'),
-    password: z
-      .string({
-        required_error: 'Password is required',
-      })
-      .min(8, 'Password must be at least 8 characters long')
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-      ),
+    password: z.string({
+      required_error: 'Password is required',
+    }),
+    // .min(8, 'Password must be at least 8 characters long')
+    // .regex(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    //   'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+    // ),
   }),
 });
 const updateUserZodSchema = z.object({

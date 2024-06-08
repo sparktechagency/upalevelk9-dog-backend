@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import Conversation from './conversation.model';
 import Message from './message.model';
 import User from '../user/user.model';
@@ -7,6 +7,7 @@ import ApiError from '../../../errors/ApiError';
 import { io } from '../../../socket/socket';
 import httpStatus from 'http-status';
 import { IReqUser } from '../user/user.interface';
+import Admin from '../admin/admin.model';
 
 //! One to one conversation
 // const sendMessage = async (req: Request) => {
@@ -71,19 +72,26 @@ import { IReqUser } from '../user/user.interface';
 //!
 const sendMessage = async (req: Request) => {
   const senderId = req.user?.userId;
+
   const { files } = req;
   const data = req.body;
 
-  const { message } = data;
-
+  const { message, conversationId } = data;
+  if (!req.user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provide');
+  }
   const checkSenderUser = await User.findById(senderId);
+  const isAdmin = await Admin.findById(senderId);
 
-  if (!checkSenderUser) {
+  if (req?.user.role === 'user' && !checkSenderUser) {
+    throw new ApiError(404, 'Sender not found');
+  }
+  if (req?.user.role === 'admin' && !isAdmin) {
     throw new ApiError(404, 'Sender not found');
   }
 
   const conversation = await Conversation.findOne({
-    participants: { $all: [senderId] },
+    _id: conversationId,
     isGroup: false,
   });
 
@@ -112,59 +120,38 @@ const sendMessage = async (req: Request) => {
   const newMessage = new Message({
     senderId,
     message,
-    conversationId: conversation._id,
+    conversationId: conversationId,
     image,
     messageType,
   });
 
-  if (newMessage) {
-    conversation.messages.push(newMessage._id);
-  }
   await Promise.all([conversation.save(), newMessage.save()]);
 
   if (conversation && newMessage) {
     // io.to(senderId).emit('getMessage', newMessage);
-    io.emit('getMessage', newMessage);
+    io.to(conversationId).emit('getMessage', newMessage);
   }
 
   return newMessage;
 };
 //!
-const getMessages = async (req: Request, res: Response) => {
-  const senderId = req.user?.userId;
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
+const getMessages = async (id: string, pages: string, limits: string) => {
+  const page = Number(pages || 1);
+  const limit = Number(limits || 10);
   const skip = (page - 1) * limit;
-  const totalMessages = await Conversation.findOne({
-    participants: { $all: [senderId] },
-    isGroup: false,
-  });
-  if (!totalMessages) {
-    return [];
-  }
-  const conversation = await Conversation.findOne({
-    participants: { $all: [senderId] },
-    isGroup: false,
-  }).populate({
-    path: 'messages',
-    options: { sort: { createdAt: -1 } },
-    //@ts-ignore
-    skip: skip,
-    limit: limit,
-  });
 
-  if (!conversation)
-    return res.status(200).json({
-      messages: [],
-      currentPage: page,
-      limit: limit,
-      totalPages: 0,
-    });
-  const total = totalMessages?.messages.length;
+  const conversation = await Message.find({
+    conversationId: id,
+  })
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+
+  const total = await Message.countDocuments({ conversationId: id });
 
   const totalPage = Math.ceil(total / limit);
-  const messages = conversation.messages;
-  // io.emit('getMessages', messages);
+  const messages = conversation;
+
   return {
     messages,
     meta: {
