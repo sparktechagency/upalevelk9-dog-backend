@@ -9,102 +9,49 @@ import httpStatus from 'http-status';
 import { IReqUser } from '../user/user.interface';
 import Admin from '../admin/admin.model';
 import { userSubscription } from '../../../utils/Subscription';
+import { Promo } from '../promo/promo.model';
 
-//!
-// const sendMessage = async (req: Request) => {
-//   const senderId = req.user?.userId;
-
-//   const { files } = req;
-//   const data = req.body;
-
-//   const { message, conversationId } = data;
-//   if (!req.user) {
-//     throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provide');
-//   }
-//   const checkSenderUser = await User.findById(senderId);
-//   const isAdmin = await Admin.findById(senderId);
-
-//   if (req?.user.role === 'user' && !checkSenderUser) {
-//     throw new ApiError(404, 'Sender not found');
-//   }
-//   if (req?.user.role === 'admin' && !isAdmin) {
-//     throw new ApiError(404, 'Sender not found');
-//   }
-
-//   const conversation = await Conversation.findOne({
-//     _id: conversationId,
-//     isGroup: false,
-//   });
-
-//   if (!conversation) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
-//   }
-//   let image = undefined;
-//   let messageType = '';
-//   //@ts-ignore
-//   if (files && files?.image) {
-//     //@ts-ignore
-//     image = `/images/image/${files.image[0].filename}`;
-//   }
-//   //@ts-ignore
-//   if (!message && files && files?.image) {
-//     messageType = 'image';
-//   }
-//   //@ts-ignore
-//   if (message && !files?.image) {
-//     messageType = 'text';
-//   }
-//   //@ts-ignore
-//   if (message && files?.image) {
-//     messageType = 'both';
-//   }
-//   const newMessage = new Message({
-//     senderId,
-//     message,
-//     conversationId: conversationId,
-//     image,
-//     messageType,
-//   });
-
-//   await Promise.all([conversation.save(), newMessage.save()]);
-
-//   if (conversation && newMessage) {
-//     // io.to(senderId).emit('getMessage', newMessage);
-//     io.to(conversationId).emit('getMessage', newMessage);
-//   }
-
-//   return newMessage;
-// };
 //!
 const sendMessage = async (req: Request) => {
-  const isSubscribed = await userSubscription(req?.user?.userId);
-
-  if (!isSubscribed || isSubscribed.status !== 'active') {
-    throw new ApiError(httpStatus.FORBIDDEN, 'User subscription is not active');
-  }
-
-  if (!['gold', 'premium'].includes(isSubscribed?.plan_type)) {
-    throw new ApiError(httpStatus.FORBIDDEN, 'Insufficient plan type');
-  }
-
   const senderId = req.user?.userId;
-  if (!senderId) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provided');
-  }
-
   const { files } = req;
   const data = req.body;
 
-  const { message, conversationId } = data;
+  const isSubscribed = await userSubscription(req?.user?.userId);
 
+  const havePromo = await Promo.findOne({ user: req?.user?.userId });
+  const isPromoActive = havePromo && havePromo.status === 'active';
+
+  if ((!isSubscribed || isSubscribed.status !== 'active') && !isPromoActive) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'User subscription is not active and no active promotion available',
+    );
+  }
+
+  if (
+    isSubscribed &&
+    isSubscribed.status === 'active' &&
+    !['gold', 'premium'].includes(isSubscribed?.plan_type) &&
+    !isPromoActive
+  ) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'Insufficient plan type and no active promotion available',
+    );
+  }
+
+  const { message, conversationId } = data;
+  if (!req.user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provide');
+  }
   const checkSenderUser = await User.findById(senderId);
   const isAdmin = await Admin.findById(senderId);
-  //@ts-ignore
-  if (req?.user.role === 'USER' && !checkSenderUser) {
+
+  if (req?.user.role === 'user' && !checkSenderUser) {
     throw new ApiError(404, 'Sender not found');
   }
-  //@ts-ignore
-  if (req?.user.role === 'ADMIN' && !isAdmin) {
+  if (req?.user.role === 'admin' && !isAdmin) {
     throw new ApiError(404, 'Sender not found');
   }
 
@@ -116,33 +63,124 @@ const sendMessage = async (req: Request) => {
   if (!conversation) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
   }
-
-  let image;
-  let messageType = 'text';
+  let image = undefined;
+  let messageType = '';
   //@ts-ignore
   if (files && files?.image) {
     //@ts-ignore
     image = `/images/image/${files.image[0].filename}`;
-    messageType = message ? 'both' : 'image';
   }
-
+  //@ts-ignore
+  if (!message && files && files?.image) {
+    messageType = 'image';
+  }
+  //@ts-ignore
+  if (message && !files?.image) {
+    messageType = 'text';
+  }
+  //@ts-ignore
+  if (message && files?.image) {
+    messageType = 'both';
+  }
   const newMessage = new Message({
     senderId,
     message,
-    conversationId,
+    conversationId: conversationId,
     image,
     messageType,
   });
 
-  await newMessage.save();
-  await conversation.save();
+  await Promise.all([conversation.save(), newMessage.save()]);
 
-  if (newMessage && conversation) {
+  if (conversation && newMessage) {
+    // io.to(senderId).emit('getMessage', newMessage);
     io.to(conversationId).emit('getMessage', newMessage);
   }
 
   return newMessage;
 };
+//!
+// const sendMessage = async (req: Request) => {
+//   const isSubscribed = await userSubscription(req?.user?.userId);
+
+//   const havePromo = await Promo.findOne({ user: req?.user?.userId });
+//   const isPromoActive = havePromo && havePromo.status === 'active';
+
+//   if ((!isSubscribed || isSubscribed.status !== 'active') && !isPromoActive) {
+//     throw new ApiError(
+//       httpStatus.FORBIDDEN,
+//       'User subscription is not active and no active promotion available',
+//     );
+//   }
+
+//   if (
+//     isSubscribed &&
+//     isSubscribed.status === 'active' &&
+//     !['gold', 'premium'].includes(isSubscribed?.plan_type) &&
+//     !isPromoActive
+//   ) {
+//     throw new ApiError(
+//       httpStatus.FORBIDDEN,
+//       'Insufficient plan type and no active promotion available',
+//     );
+//   }
+//   const senderId = req.user?.userId;
+//   if (!senderId) {
+//     throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provided');
+//   }
+
+//   const { files } = req;
+//   const data = req.body;
+
+//   const { message, conversationId } = data;
+
+//   const checkSenderUser = await User.findById(senderId);
+//   const isAdmin = await Admin.findById(senderId);
+//   //@ts-ignore
+//   if (req?.user.role === 'USER' && !checkSenderUser) {
+//     throw new ApiError(404, 'Sender not found');
+//   }
+//   //@ts-ignore
+//   if (req?.user.role === 'ADMIN' && !isAdmin) {
+//     throw new ApiError(404, 'Sender not found');
+//   }
+
+//   const conversation = await Conversation.findOne({
+//     _id: conversationId,
+//     isGroup: false,
+//   });
+
+//   if (!conversation) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
+//   }
+
+//   let image;
+//   let messageType = 'text';
+//   //@ts-ignore
+//   if (files && files?.image) {
+//     //@ts-ignore
+//     image = `/images/image/${files.image[0].filename}`;
+//     messageType = message ? 'both' : 'image';
+//   }
+
+//   const newMessage = new Message({
+//     senderId,
+//     message,
+//     conversationId,
+//     image,
+//     messageType,
+//   });
+
+//   await newMessage.save();
+//   await conversation.save();
+
+//   if (newMessage && conversation) {
+//     io.to(conversationId).emit('getMessage', newMessage);
+//   }
+
+//   return newMessage;
+// };
+//!
 
 //!
 const getMessages = async (id: string, pages: string, limits: string) => {
