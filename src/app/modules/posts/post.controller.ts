@@ -36,7 +36,7 @@ const Posts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const singlePost = catchAsync(async (req: Request, res: Response) => {
-  const result = await PostService.singlePost(req.params.id);
+  const result = await PostService.singlePost(req);
   sendResponse(res, {
     statusCode: 200,
     success: true,

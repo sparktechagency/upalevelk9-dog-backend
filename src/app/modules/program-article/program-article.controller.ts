@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response } from 'express';
 import catchAsync from '../../../shared/catchasync';
 
 import sendResponse from '../../../shared/sendResponse';
 import { ProgramArticleService } from './program-article.service';
+import { IReqUser } from '../user/user.interface';
+import { IArticle } from './program-article.interface';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const result = await ProgramArticleService.insertIntoDB(req);
@@ -15,18 +18,21 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getTraining = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProgramArticleService.getTraining(req.query);
+  const user = req.user as IReqUser;
+  const result = await ProgramArticleService.getTraining(user, req.query);
 
-  sendResponse(res, {
+  sendResponse<IArticle[]>(res, {
     statusCode: 200,
     success: true,
     message: 'Training Programs retrieved successful',
+    //@ts-ignore
     data: result.data,
+    //@ts-ignore
     meta: result.meta,
   });
 });
 const getSingleTraining = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProgramArticleService.getSingleTraining(req.params.id);
+  const result = await ProgramArticleService.getSingleTraining(req);
 
   sendResponse(res, {
     statusCode: 200,
@@ -37,9 +43,7 @@ const getSingleTraining = catchAsync(async (req: Request, res: Response) => {
 });
 const getSingleTrainingByProgram = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await ProgramArticleService.getSingleTrainingByProgram(
-      req.params.id,
-    );
+    const result = await ProgramArticleService.getSingleTrainingByProgram(req);
 
     sendResponse(res, {
       statusCode: 200,
@@ -50,9 +54,7 @@ const getSingleTrainingByProgram = catchAsync(
   },
 );
 const getTrainingByProgram = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProgramArticleService.getTrainingByProgram(
-    req.params.id,
-  );
+  const result = await ProgramArticleService.getTrainingByProgram(req);
 
   sendResponse(res, {
     statusCode: 200,

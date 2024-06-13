@@ -103,8 +103,11 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     plan_type: {
       type: String,
-      enum: ['free', 'basic', 'gold', 'premium'],
-      default: 'free',
+      enum: ['silver', 'gold', 'premium'],
+    },
+    isSubscribed: {
+      type: Boolean,
+      default: false,
     },
     expirationTime: { type: Date, default: () => Date.now() + 2 * 60 * 1000 },
   },

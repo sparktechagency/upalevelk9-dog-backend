@@ -26,6 +26,7 @@ import { ENUM_USER_ROLE } from '../../../enums/user';
 import sendEmail from '../../../utils/sendEmail';
 import { registrationSuccess } from './admi.email';
 import Conversation from '../messages/conversation.model';
+import { Request } from 'express';
 
 //!
 const registrationUser = async (payload: IRegistration) => {
@@ -315,8 +316,9 @@ const resetPassword = async (
   await Admin.updateOne({ email }, { password }, { new: true });
 };
 //!
-const myProfile = async (id: string) => {
-  const result = await Admin.findById(id);
+const myProfile = async (req: Request) => {
+  const { userId } = req.user as IReqUser;
+  const result = await Admin.findById(userId);
   if (!result) {
     throw new ApiError(404, 'Profile not found');
   }

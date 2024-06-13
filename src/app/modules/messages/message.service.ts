@@ -8,85 +8,103 @@ import { io } from '../../../socket/socket';
 import httpStatus from 'http-status';
 import { IReqUser } from '../user/user.interface';
 import Admin from '../admin/admin.model';
+import { userSubscription } from '../../../utils/Subscription';
 
-//! One to one conversation
+//!
 // const sendMessage = async (req: Request) => {
-//   try {
-//     // const { message } = req.body;
-//     const { id: receiverId } = req.params;
-//     const senderId = req.user?.userId;
-//     const { files } = req;
-//     const data = req.body;
+//   const senderId = req.user?.userId;
 
-//     const { message } = data;
+//   const { files } = req;
+//   const data = req.body;
 
-//     const checkReceiverUser = await User.findById(receiverId);
-//     const checkSenderUser = await User.findById(senderId);
-
-//     if (checkReceiverUser === null || checkSenderUser === null) {
-//       throw new ApiError(404, 'Sender or Receiver user not found');
-//     }
-
-//     let conversation = await Conversation.findOne({
-//       participants: { $all: [senderId, receiverId] },
-//       isGroup: false,
-//     });
-//     // console.log(conversation, 'conversation');
-//     if (!conversation) {
-//       conversation = await Conversation.create({
-//         participants: [senderId, receiverId],
-//       });
-//     }
-//     let image = undefined;
-
-//     //@ts-ignore
-//     if (files && files?.image) {
-//       //@ts-ignore
-
-//       image = `/images/image/${files.image[0].filename}`;
-//     }
-//     const newMessage = new Message({
-//       senderId,
-//       receiverId,
-//       message,
-//       conversationId: conversation._id,
-//       image,
-//     });
-
-//     if (newMessage) {
-//       conversation.messages.push(newMessage._id);
-//     }
-//     await Promise.all([conversation.save(), newMessage.save()]);
-
-//     if (conversation && newMessage) {
-//       //@ts-ignore
-//       io.to(receiverId).emit('getMessage', newMessage);
-//     }
-
-//     return newMessage;
-//   } catch (error) {
-//     //@ts-ignore
-//     console.log('Error in sendMessage controller: ', error?.message);
+//   const { message, conversationId } = data;
+//   if (!req.user) {
+//     throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provide');
 //   }
+//   const checkSenderUser = await User.findById(senderId);
+//   const isAdmin = await Admin.findById(senderId);
+
+//   if (req?.user.role === 'user' && !checkSenderUser) {
+//     throw new ApiError(404, 'Sender not found');
+//   }
+//   if (req?.user.role === 'admin' && !isAdmin) {
+//     throw new ApiError(404, 'Sender not found');
+//   }
+
+//   const conversation = await Conversation.findOne({
+//     _id: conversationId,
+//     isGroup: false,
+//   });
+
+//   if (!conversation) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
+//   }
+//   let image = undefined;
+//   let messageType = '';
+//   //@ts-ignore
+//   if (files && files?.image) {
+//     //@ts-ignore
+//     image = `/images/image/${files.image[0].filename}`;
+//   }
+//   //@ts-ignore
+//   if (!message && files && files?.image) {
+//     messageType = 'image';
+//   }
+//   //@ts-ignore
+//   if (message && !files?.image) {
+//     messageType = 'text';
+//   }
+//   //@ts-ignore
+//   if (message && files?.image) {
+//     messageType = 'both';
+//   }
+//   const newMessage = new Message({
+//     senderId,
+//     message,
+//     conversationId: conversationId,
+//     image,
+//     messageType,
+//   });
+
+//   await Promise.all([conversation.save(), newMessage.save()]);
+
+//   if (conversation && newMessage) {
+//     // io.to(senderId).emit('getMessage', newMessage);
+//     io.to(conversationId).emit('getMessage', newMessage);
+//   }
+
+//   return newMessage;
 // };
 //!
 const sendMessage = async (req: Request) => {
+  const isSubscribed = await userSubscription(req?.user?.userId);
+
+  if (!isSubscribed || isSubscribed.status !== 'active') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User subscription is not active');
+  }
+
+  if (!['gold', 'premium'].includes(isSubscribed?.plan_type)) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Insufficient plan type');
+  }
+
   const senderId = req.user?.userId;
+  if (!senderId) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provided');
+  }
 
   const { files } = req;
   const data = req.body;
 
   const { message, conversationId } = data;
-  if (!req.user) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token must be provide');
-  }
+
   const checkSenderUser = await User.findById(senderId);
   const isAdmin = await Admin.findById(senderId);
-
-  if (req?.user.role === 'user' && !checkSenderUser) {
+  //@ts-ignore
+  if (req?.user.role === 'USER' && !checkSenderUser) {
     throw new ApiError(404, 'Sender not found');
   }
-  if (req?.user.role === 'admin' && !isAdmin) {
+  //@ts-ignore
+  if (req?.user.role === 'ADMIN' && !isAdmin) {
     throw new ApiError(404, 'Sender not found');
   }
 
@@ -98,42 +116,34 @@ const sendMessage = async (req: Request) => {
   if (!conversation) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
   }
-  let image = undefined;
-  let messageType = '';
+
+  let image;
+  let messageType = 'text';
   //@ts-ignore
   if (files && files?.image) {
     //@ts-ignore
     image = `/images/image/${files.image[0].filename}`;
+    messageType = message ? 'both' : 'image';
   }
-  //@ts-ignore
-  if (!message && files && files?.image) {
-    messageType = 'image';
-  }
-  //@ts-ignore
-  if (message && !files?.image) {
-    messageType = 'text';
-  }
-  //@ts-ignore
-  if (message && files?.image) {
-    messageType = 'both';
-  }
+
   const newMessage = new Message({
     senderId,
     message,
-    conversationId: conversationId,
+    conversationId,
     image,
     messageType,
   });
 
-  await Promise.all([conversation.save(), newMessage.save()]);
+  await newMessage.save();
+  await conversation.save();
 
-  if (conversation && newMessage) {
-    // io.to(senderId).emit('getMessage', newMessage);
+  if (newMessage && conversation) {
     io.to(conversationId).emit('getMessage', newMessage);
   }
 
   return newMessage;
 };
+
 //!
 const getMessages = async (id: string, pages: string, limits: string) => {
   const page = Number(pages || 1);

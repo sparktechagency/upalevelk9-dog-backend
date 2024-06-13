@@ -32,8 +32,8 @@ const subscriptionsSchema = new Schema<ISubscriptionPlan>(
     },
     plan_type: {
       type: String,
-      enum: ['free', 'basic', 'gold', 'premium', 'silver'],
-      default: 'free',
+      enum: ['gold', 'premium', 'silver'],
+      required: true,
     },
   },
   {

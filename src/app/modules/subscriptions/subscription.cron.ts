@@ -1,16 +1,42 @@
 import cron from 'node-cron';
 import { Subscription } from './subscriptions.model';
+import { Promo } from '../promo/promo.model';
+import { logger } from '../../../shared/logger';
+import User from '../user/user.model';
 
-// Schedule a cron job to run every day at midnight
 cron.schedule('0 0 * * *', async () => {
   try {
     const now = new Date();
     await Subscription.updateMany(
       { endDate: { $lt: now }, status: 'active' },
       { $set: { status: 'inactive' } },
+      { new: true, multi: true },
     );
-    console.log('Subscription statuses updated successfully');
+
+    const expiredSubscriptions = await Subscription.find(
+      { endDate: { $lt: now }, status: 'inactive' },
+      { user_id: 1 },
+    ).lean();
+    const userIds = expiredSubscriptions.map(sub => sub.user_id);
+
+    await User.updateMany(
+      { _id: { $in: userIds } },
+      { $set: { isSubscribed: false } },
+    );
+    logger.info('Subscription statuses updated successfully');
   } catch (error) {
-    console.error('Error updating subscription statuses:', error);
+    logger.error('Error updating subscription statuses:', error);
+  }
+});
+cron.schedule('0 0 * * *', async () => {
+  try {
+    const now = new Date();
+    await Promo.updateMany(
+      { endDate: { $lt: now }, status: 'active' },
+      { $set: { status: 'inactive' } },
+    );
+    logger.info('Promo statuses updated successfully');
+  } catch (error) {
+    logger.error('Error updating Promo statuses:', error);
   }
 });

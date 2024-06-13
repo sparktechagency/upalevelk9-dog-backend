@@ -6,6 +6,7 @@ import { Subscription } from './subscriptions.model';
 
 import User from '../user/user.model';
 import { IReqUser } from '../user/user.interface';
+import { logger } from '../../../shared/logger';
 
 const upgradeSubscription = async (req: Request) => {
   try {
@@ -15,12 +16,13 @@ const upgradeSubscription = async (req: Request) => {
     if (!checkUser) {
       throw new ApiError(404, 'User not found');
     }
-    checkUser.isPaid = true;
+
     const subscriptionPlan = await SubscriptionPlan.findById(planId);
     if (!subscriptionPlan) {
       throw new ApiError(404, 'Plan not found');
     }
-
+    checkUser.isPaid = true;
+    checkUser.isSubscribed = true;
     const startDate = new Date();
     const endDate = new Date(
       startDate.getTime() + subscriptionPlan.duration * 24 * 60 * 60 * 1000,
@@ -39,7 +41,7 @@ const upgradeSubscription = async (req: Request) => {
     return subscription;
   } catch (error) {
     //@ts-ignore
-    console.log(error.message);
+    logger.log(error.message);
     //@ts-ignore
     throw new Error(error?.message);
   }

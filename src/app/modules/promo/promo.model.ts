@@ -27,8 +27,10 @@ const promoSchema = new Schema<IPromo>(
       required: true,
     },
     status: {
-      type: Boolean,
-      default: true,
+      type: String,
+      required: true,
+      enum: ['active', 'inactive'],
+      default: 'active',
     },
   },
   {

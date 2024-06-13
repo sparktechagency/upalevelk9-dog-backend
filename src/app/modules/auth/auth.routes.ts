@@ -108,10 +108,6 @@ router.patch(
   uploadFile(),
   AdminController.updateAdmin,
 );
-router.get(
-  '/admin/me/:id',
-  auth(ENUM_USER_ROLE.ADMIN),
-  AdminController.myProfile,
-);
+router.get('/admin/me', auth(ENUM_USER_ROLE.ADMIN), AdminController.myProfile);
 
 export const AuthRoutes = router;

@@ -11,12 +11,12 @@ import {
 
 const registrationUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await UserService.registrationUser(req.body);
+    await UserService.registrationUser(req.body);
 
     sendResponse(res, {
       statusCode: 200,
       success: true,
-      message: `Please check your email: ${result?.user?.email} to active your account`,
+      message: `Please check your email to active your account`,
     });
   },
 );

@@ -10,14 +10,14 @@ const router = express.Router();
 
 router.post(
   '/add-post',
-  auth(ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   uploadFile(),
   validateRequest(PostValidation.post),
   PostController.createPost,
 );
 router.post(
   '/add-comment',
-  auth(ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   PostController.addComment,
 );
 router.get(
@@ -32,17 +32,17 @@ router.get(
 );
 router.get(
   '/single-post/:id',
-  auth(ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   PostController.singlePost,
 );
 router.delete(
   '/delete-post/:id',
-  auth(ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   PostController.deletePost,
 );
 router.delete(
   '/delete-comment/:postId/:commentId',
-  auth(ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   PostController.deleteComment,
 );
 router.patch(
