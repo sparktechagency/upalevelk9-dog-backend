@@ -7,9 +7,7 @@ import { IReqUser } from '../user/user.interface';
 import Admin from '../admin/admin.model';
 import { userSubscription } from '../../../utils/Subscription';
 import httpStatus from 'http-status';
-// import { INotification } from '../notifications/notifications.interface';
-// import User from '../user/user.model';
-// import Notification from '../notifications/notifications.model';
+import { Promo } from '../promo/promo.model';
 
 const insertIntoDB = async (req: Request) => {
   const { files, body } = req;
@@ -76,24 +74,54 @@ const getTraining = async (user: IReqUser, query: Record<string, unknown>) => {
     };
   }
 };
+//!
+// const getSingleTraining = async (req: Request) => {
+//   const { id } = req.params;
+//   const isExistUser = await Admin.findById(req?.user?.userId);
+//   const isSubscribed = await userSubscription(req?.user?.userId);
+
+//   if (isSubscribed || isExistUser) {
+//     const result = await ProgramArticle.findById(id);
+//     if (!result) {
+//       throw new ApiError(404, 'Training Programs not found');
+//     }
+//     return result;
+//   } else {
+//     throw new ApiError(
+//       httpStatus.BAD_REQUEST,
+//       'Please Subscribe For Access Training Programs',
+//     );
+//   }
+// };
+//!
 const getSingleTraining = async (req: Request) => {
   const { id } = req.params;
-  const isExistUser = await Admin.findById(req?.user?.userId);
-  const isSubscribed = await userSubscription(req?.user?.userId);
+  const userId = req?.user?.userId;
 
-  if (isSubscribed || isExistUser) {
+  const isExistUser = await Admin.findById(userId);
+  const isSubscribed = await userSubscription(userId);
+
+  const havePromo = await Promo.findOne({ user: userId });
+  const isPromoActive = havePromo && havePromo.status === 'active';
+
+  if (
+    isExistUser?.role === 'ADMIN' ||
+    (isSubscribed && isSubscribed.status === 'active') ||
+    isPromoActive
+  ) {
     const result = await ProgramArticle.findById(id);
     if (!result) {
-      throw new ApiError(404, 'Training Programs not found');
+      throw new ApiError(httpStatus.NOT_FOUND, 'Training Program not found');
     }
     return result;
   } else {
     throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      'Please Subscribe For Access Training Programs',
+      httpStatus.FORBIDDEN,
+      'Please subscribe or activate a promotion to access Training Programs',
     );
   }
 };
+
 const getSingleTrainingByProgram = async (req: Request) => {
   const { id } = req.params;
   const isExistUser = await Admin.findById(req?.user?.userId);
