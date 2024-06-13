@@ -3,6 +3,10 @@ import { Request } from 'express';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import ApiError from '../../../errors/ApiError';
 import { ProgramArticle } from './program-article.model';
+import { IReqUser } from '../user/user.interface';
+import Admin from '../admin/admin.model';
+import { userSubscription } from '../../../utils/Subscription';
+import httpStatus from 'http-status';
 // import { INotification } from '../notifications/notifications.interface';
 // import User from '../user/user.model';
 // import Notification from '../notifications/notifications.model';
@@ -37,42 +41,92 @@ const insertIntoDB = async (req: Request) => {
 
   return result;
 };
-const getTraining = async (query: Record<string, unknown>) => {
-  const trainingQuery = new QueryBuilder(ProgramArticle.find({}), query)
-    .search(['article_title', 'article_name'])
-    .filter()
-    .sort()
-    .paginate()
-    .fields();
+const getTraining = async (user: IReqUser, query: Record<string, unknown>) => {
+  const { role } = user;
+  if (role === 'ADMIN') {
+    const trainingQuery = new QueryBuilder(ProgramArticle.find({}), query)
+      .search(['article_title', 'article_name'])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
 
-  const result = await trainingQuery.modelQuery;
-  const meta = await trainingQuery.countTotal();
+    const result = await trainingQuery.modelQuery;
+    const meta = await trainingQuery.countTotal();
 
-  return {
-    meta,
-    data: result,
-  };
-};
-const getSingleTraining = async (id: string) => {
-  const result = await ProgramArticle.findById(id);
-  if (!result) {
-    throw new ApiError(404, 'Training Programs not found');
+    return {
+      meta,
+      data: result,
+    };
   }
-  return result;
-};
-const getSingleTrainingByProgram = async (id: string) => {
-  const result = await ProgramArticle.findOne({ training_program: id });
-  if (!result) {
-    throw new ApiError(404, 'Training Programs not found');
+  if (role === 'USER') {
+    const trainingQuery = new QueryBuilder(ProgramArticle.find({}), query)
+      .search(['article_title', 'article_name'])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+
+    const result = await trainingQuery.modelQuery;
+    const meta = await trainingQuery.countTotal();
+
+    return {
+      meta,
+      data: result,
+    };
   }
-  return result;
 };
-const getTrainingByProgram = async (id: string) => {
-  const result = await ProgramArticle.find({ training_program: id });
-  if (!result) {
-    throw new ApiError(404, 'Program article not found');
+const getSingleTraining = async (req: Request) => {
+  const { id } = req.params;
+  const isExistUser = await Admin.findById(req?.user?.userId);
+  const isSubscribed = await userSubscription(req?.user?.userId);
+
+  if (isSubscribed || isExistUser) {
+    const result = await ProgramArticle.findById(id);
+    if (!result) {
+      throw new ApiError(404, 'Training Programs not found');
+    }
+    return result;
+  } else {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Please Subscribe For Access Training Programs',
+    );
   }
-  return result;
+};
+const getSingleTrainingByProgram = async (req: Request) => {
+  const { id } = req.params;
+  const isExistUser = await Admin.findById(req?.user?.userId);
+  const isSubscribed = await userSubscription(req?.user?.userId);
+  if (isSubscribed || isExistUser) {
+    const result = await ProgramArticle.findOne({ training_program: id });
+    if (!result) {
+      throw new ApiError(404, 'Training Programs not found');
+    }
+    return result;
+  } else {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Please Subscribe For Access Training Programs',
+    );
+  }
+};
+const getTrainingByProgram = async (req: Request) => {
+  const { id } = req.params;
+  const isExistUser = await Admin.findById(req?.user?.userId);
+  const isSubscribed = await userSubscription(req?.user?.userId);
+  if (isSubscribed || isExistUser) {
+    const result = await ProgramArticle.find({ training_program: id });
+    if (!result) {
+      throw new ApiError(404, 'Program article not found');
+    }
+    return result;
+  } else {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Please Subscribe For Access Training Programs',
+    );
+  }
 };
 const updateTraining = async (req: Request) => {
   const { files, body } = req;

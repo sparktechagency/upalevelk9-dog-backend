@@ -6,9 +6,21 @@ import { IPost } from './post.interface';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import { IReqUser } from '../user/user.interface';
 import Notification from '../notifications/notifications.model';
+import { userSubscription } from '../../../utils/Subscription';
+import httpStatus from 'http-status';
+
+import Admin from '../admin/admin.model';
 
 //! Add a post
 const createPost = async (req: Request) => {
+  const isSubscribed = await userSubscription(req?.user?.userId);
+  if (
+    !isSubscribed ||
+    isSubscribed.status !== 'active' ||
+    isSubscribed.plan_type !== 'premium'
+  ) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User subscription is not active');
+  }
   const { files } = req;
   const data = req.body;
   const user = req.user;
@@ -90,18 +102,32 @@ const Posts = async (query: Record<string, unknown>, user: IReqUser) => {
   };
 };
 //! Single Post
-const singlePost = async (id: string) => {
-  const result = await Post.findOne({ _id: id })
-    .populate('user')
-    .populate({
-      path: 'comments',
-      populate: [{ path: 'user', select: 'name profile_image' }],
-    });
-  if (!result) {
-    throw new ApiError(404, 'Post not found');
-  }
+const singlePost = async (req: Request) => {
+  const { id } = req.params;
+  const isExistUser = await Admin.findById(req?.user?.userId);
 
-  return result;
+  const isSubscribed = await userSubscription(req?.user?.userId);
+  if (!isSubscribed || isSubscribed.status !== 'active') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User subscription is not active');
+  }
+  if (isSubscribed || isExistUser?.role === 'ADMIN') {
+    const result = await Post.findOne({ _id: id })
+      .populate('user')
+      .populate({
+        path: 'comments',
+        populate: [{ path: 'user', select: 'name profile_image' }],
+      });
+    if (!result) {
+      throw new ApiError(404, 'Post not found');
+    }
+
+    return result;
+  } else {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Please Subscribe For Access Community Post',
+    );
+  }
 };
 //! Delete Post
 const deletePost = async (id: string) => {
