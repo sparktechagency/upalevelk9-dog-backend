@@ -161,6 +161,16 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
     message: 'Account recovered!',
   });
 });
+const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await AdminService.deleteAdmin(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Admin deleted successfully',
+    data: result,
+  });
+});
 export const AdminController = {
   createUser,
   getAllUsers,
@@ -175,4 +185,5 @@ export const AdminController = {
   myProfile,
   forgotPass,
   resetPassword,
+  deleteAdmin,
 };

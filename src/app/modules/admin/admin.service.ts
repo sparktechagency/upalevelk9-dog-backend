@@ -324,7 +324,10 @@ const myProfile = async (req: Request) => {
   }
   return result;
 };
-
+const deleteAdmin = async (id: string) => {
+  const result = await User.findByIdAndDelete(id);
+  return result;
+};
 export const AdminService = {
   createUser,
   getAllUsers,
@@ -339,4 +342,5 @@ export const AdminService = {
   myProfile,
   forgotPass,
   resetPassword,
+  deleteAdmin,
 };
