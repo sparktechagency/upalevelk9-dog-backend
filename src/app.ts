@@ -5,15 +5,14 @@ import routes from './app/routes';
 import { NotFoundHandler } from './errors/NotFoundHandler';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import helmet from 'helmet';
+
 import './app/modules/subscriptions/subscription.cron';
 import './app/modules/notifications/notification.cron';
 export const app: Application = express();
-//
-app.use(helmet());
+
 app.use(
   cors({
-    origin: '*',
+    origin: ['http://192.168.10.16:3000'],
     credentials: true,
   }),
 );
