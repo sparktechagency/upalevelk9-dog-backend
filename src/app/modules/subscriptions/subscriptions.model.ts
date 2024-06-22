@@ -13,11 +13,6 @@ const subscriptionSchema = new Schema<ISubscription>(
       ref: 'SubscriptionPlan',
       required: true,
     },
-    payment_id: {
-      type: String,
-
-      required: true,
-    },
     startDate: {
       type: Date,
       required: true,
@@ -32,17 +27,20 @@ const subscriptionSchema = new Schema<ISubscription>(
       enum: ['paid', 'unpaid', 'trail'],
       default: 'unpaid',
     },
-    plan_type: {
-      type: String,
-      enum: ['silver', 'gold', 'premium'],
-    },
     status: {
       type: String,
       required: true,
       enum: ['active', 'inactive'],
       default: 'active',
     },
-    trasactionId: { type: String, required: false },
+    transaction_id: {
+      type: String,
+      required: true,
+    },
+    amount: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

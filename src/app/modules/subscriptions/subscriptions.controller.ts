@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
 import catchAsync from '../../../shared/catchasync';
-import { SubscriptionService } from './subscriptions.service';
 import sendResponse from '../../../shared/sendResponse';
-import { IReqUser } from '../user/user.interface';
+import { SubscriptionService } from './subscriptions.service';
 
 const upgradeSubscription = catchAsync(async (req: Request, res: Response) => {
-  const result = await SubscriptionService.upgradeSubscription(req);
+  const user = req.user;
+  const { ...subscriptionData } = req.body;
+  const result = await SubscriptionService.upgradeSubscriptionToDB(
+    user!,
+    subscriptionData,
+  );
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -13,8 +17,11 @@ const upgradeSubscription = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 const mySubscription = catchAsync(async (req: Request, res: Response) => {
-  const result = await SubscriptionService.mySubscription(req.user as IReqUser);
+  const user = req.user;
+  const result = await SubscriptionService.mySubscriptionFromDB(user!);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
