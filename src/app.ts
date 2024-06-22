@@ -12,7 +12,11 @@ export const app: Application = express();
 
 app.use(
   cors({
-    origin: ['http://192.168.10.16:3000'],
+    origin: [
+      'http://192.168.10.16:3000',
+      'http://192.168.30.250:3000',
+      'http://192.168.10.102:3000',
+    ],
     credentials: true,
   }),
 );

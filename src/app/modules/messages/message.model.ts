@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema(
   {
-    senderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    sender: {
+      type: String,
+      enum: ['user', 'support'],
       required: true,
     },
 
@@ -22,7 +22,7 @@ const messageSchema = new mongoose.Schema(
     },
     messageType: {
       type: String,
-      enum: ['text', 'image', 'both'],
+      enum: ['text', 'image', 'both', 'video'],
       required: true,
     },
   },

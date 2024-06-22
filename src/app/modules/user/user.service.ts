@@ -43,12 +43,13 @@ import Conversation from '../messages/conversation.model';
 //!
 //!
 const registrationUser = async (payload: IRegistration) => {
-  const { name, email, password, phone_number } = payload;
+  const { name, email, password, phone_number, role } = payload;
   const user = {
     name,
     email,
     password,
     phone_number,
+    role,
     expirationTime: Date.now() + 2 * 60 * 1000,
   } as unknown as IUser;
 
@@ -81,6 +82,7 @@ const createActivationToken = () => {
 
   return { activationCode };
 };
+
 //!
 const activateUser = async (payload: IActivationRequest) => {
   const { activation_code, userEmail } = payload;
@@ -100,28 +102,10 @@ const activateUser = async (payload: IActivationRequest) => {
       runValidators: true,
     },
   )) as IUser;
-  const adminIds = await Admin.find({}).distinct('_id');
-  // Filter out duplicate admin IDs
-  const uniqueAdminIds = adminIds.filter(
-    (id, index) => adminIds.indexOf(id) === index,
-  );
-  // Merge user ID and unique admin IDs
-  const participants = [user._id, ...uniqueAdminIds];
-
-  const conversation = new Conversation({
-    participants,
-  });
-
-  await conversation.save();
-  existUser.activationCode = '';
-  user.conversationId = conversation?._id.toString();
-  await user.save();
-  await existUser.save();
 
   const accessToken = jwtHelpers.createToken(
     {
       userId: existUser._id,
-      conversationId: conversation._id,
       role: existUser.role,
     },
     config.jwt.secret as Secret,
@@ -137,7 +121,6 @@ const activateUser = async (payload: IActivationRequest) => {
     accessToken,
     refreshToken,
     user,
-    conversationId: conversation?._id,
   };
 };
 
