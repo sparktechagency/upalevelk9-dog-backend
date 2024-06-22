@@ -1,7 +1,5 @@
 import { Schema } from 'mongoose';
-
 type SubscriptionStatus = 'paid' | 'unpaid' | 'trail';
-type SubscriptionPlan = 'free' | 'basic' | 'gold' | 'premium';
 type SubscriptionState = 'active' | 'inactive';
 
 export type ISubscription = {
@@ -10,8 +8,6 @@ export type ISubscription = {
   startDate: Date;
   endDate: Date;
   payment_status: SubscriptionStatus;
-  plan_type: SubscriptionPlan;
   status: SubscriptionState;
-  trasactionId?: string;
-  payment_id: string;
+  transactionId?: string;
 };

@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
+import { Server } from 'socket.io';
 import { app } from './app';
 import config from './config/index';
 import { errorLogger, logger } from './shared/logger';
-import { Server } from 'socket.io';
 import socket from './socket/socket';
 
 process.on('uncaughtException', error => {
@@ -50,10 +50,11 @@ async function main() {
     }
   });
 }
+
 main().catch(err => errorLogger.error(err));
 
 process.on('SIGTERM', () => {
-  console.info('SIGTERM is received');
+  logger.info('SIGTERM is received');
   if (server) {
     server.close();
   }
