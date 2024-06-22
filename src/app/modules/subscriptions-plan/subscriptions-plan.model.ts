@@ -1,77 +1,77 @@
-import { Schema, model } from 'mongoose';
+import httpStatus from 'http-status';
+import { model, Schema } from 'mongoose';
+import { packageName } from '../../../constants/subscription.name';
+import ApiError from '../../../errors/ApiError';
 import {
+  IPackageDetails,
   ISubscriptionPlan,
-  ISubscriptionPlanItem,
+  SubscriptionPlanModel,
 } from './subscriptions-plan.interface';
 
-const subscriptionsSchema = new Schema<ISubscriptionPlan>(
+const packageDetailSchema = new Schema<IPackageDetails>(
   {
     title: {
       type: String,
-      required: true,
-    },
-    items: [
-      {
-        title: {
-          type: String,
-        },
-      },
-    ],
-    price: {
-      type: Number,
-      required: true,
-      default: 0,
     },
     status: {
       type: Boolean,
-      default: true,
-    },
-    duration: {
-      type: Number,
-      required: true,
-    },
-    plan_type: {
-      type: String,
-      enum: ['gold', 'premium', 'silver'],
-      required: true,
+      default: false,
     },
   },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-    },
-  },
+  { _id: false }, // Prevents Mongoose from creating an _id field for these subdocuments
 );
 
-const subscriptionItemSchema = new Schema<ISubscriptionPlanItem>(
+const subscriptionPlanSchema = new Schema<
+  ISubscriptionPlan,
+  SubscriptionPlanModel
+>(
   {
-    subscriptions_id: {
-      type: Schema.Types.ObjectId,
-      ref: 'SubscriptionPlan',
-      required: true,
-    },
-    title: {
+    packageName: {
       type: String,
+      enum: packageName,
       required: true,
     },
-    status: {
-      type: Boolean,
-      default: true,
+    packagePrice: {
+      type: Number,
+      required: true,
+    },
+    packageDuration: {
+      type: Number,
+      required: true,
+    },
+    trainingVideo: {
+      type: packageDetailSchema,
+    },
+    communityGroup: {
+      type: packageDetailSchema,
+    },
+    videoLesson: {
+      type: packageDetailSchema,
+    },
+    chat: {
+      type: packageDetailSchema,
+    },
+    program: {
+      type: packageDetailSchema,
     },
   },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-    },
-  },
+  { timestamps: true },
 );
-export const SubscriptionPlan = model<ISubscriptionPlan>(
+
+subscriptionPlanSchema.pre('save', async function (next) {
+  const isExist = await SubscriptionPlan.findOne({
+    packageName: this.packageName,
+  });
+  if (isExist) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Subscription plan already exist!',
+    );
+  }
+  next();
+});
+
+export const SubscriptionPlan = model<ISubscriptionPlan, SubscriptionPlanModel>(
   'SubscriptionPlan',
-  subscriptionsSchema,
-);
-export const SubscriptionsItem = model<ISubscriptionPlanItem>(
-  'SubscriptionsItem',
-  subscriptionItemSchema,
+  subscriptionPlanSchema,
 );

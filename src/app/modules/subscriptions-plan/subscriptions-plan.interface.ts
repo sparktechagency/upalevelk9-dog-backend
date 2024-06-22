@@ -1,15 +1,19 @@
-import { Types } from 'mongoose';
+import { Model } from 'mongoose';
+
+export type IPackageDetails = { title: string; status: boolean };
 
 export type ISubscriptionPlan = {
-  title: string;
-  items: [];
-  price: number;
-  status: boolean;
-  plan_type: 'free' | 'basic' | 'gold' | 'premium';
-  duration: number;
+  packageName: 'Basic' | 'Standard' | 'Premium';
+  packagePrice: number;
+  packageDuration: number;
+  trainingVideo?: IPackageDetails;
+  communityGroup?: IPackageDetails;
+  videoLesson?: IPackageDetails;
+  chat?: IPackageDetails;
+  program?: IPackageDetails;
 };
-export type ISubscriptionPlanItem = {
-  subscriptions_id: Types.ObjectId | ISubscriptionPlan;
-  title: string;
-  status: boolean;
-};
+
+export type SubscriptionPlanModel = Model<
+  ISubscriptionPlan,
+  Record<string, unknown>
+>;
