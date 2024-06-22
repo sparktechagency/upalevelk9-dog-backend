@@ -2,10 +2,9 @@ import { z } from 'zod';
 
 const post = z.object({
   body: z.object({
-    planId: z.string({ required_error: 'planId is required' }),
-    transactionId: z.string({ required_error: 'transactionId is required' }),
-    payment_status: z.string({ required_error: 'payment_status is required' }),
-    payment_id: z.string({ required_error: 'payment_id is required' }),
+    plan_id: z.string({ required_error: 'planId is required' }),
+    transaction_id: z.string({ required_error: 'transactionId is required' }),
+    amount: z.string({ required_error: 'Price is required' }),
   }),
 });
 

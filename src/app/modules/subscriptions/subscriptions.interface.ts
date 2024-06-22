@@ -1,13 +1,14 @@
-import { Schema } from 'mongoose';
-type SubscriptionStatus = 'paid' | 'unpaid' | 'trail';
+import { Types } from 'mongoose';
+type SubscriptionPaymentStatus = 'paid' | 'unpaid' | 'trail';
 type SubscriptionState = 'active' | 'inactive';
 
 export type ISubscription = {
-  user_id: Schema.Types.ObjectId;
-  plan_id: Schema.Types.ObjectId;
+  user_id: Types.ObjectId;
+  plan_id: Types.ObjectId;
   startDate: Date;
   endDate: Date;
-  payment_status: SubscriptionStatus;
+  payment_status: SubscriptionPaymentStatus;
   status: SubscriptionState;
-  transactionId?: string;
+  transaction_id: string;
+  amount: string;
 };
