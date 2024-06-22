@@ -98,9 +98,6 @@ const UserSchema = new Schema<IUser, UserModel>(
       type: Boolean,
       default: false,
     },
-    conversationId: {
-      type: String,
-    },
     plan_type: {
       type: String,
       enum: ['silver', 'gold', 'premium'],

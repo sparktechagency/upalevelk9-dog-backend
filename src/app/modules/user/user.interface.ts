@@ -13,9 +13,11 @@ export type IRegistration = {
   email: string;
   password: string;
   avatar?: string;
-  phone_number: string;
+  phone_number?: string;
+  role?: string;
 };
 export type IActivationToken = {
+  //i will do it , but what? its hello world.
   token: string;
   activationCode: string;
 };

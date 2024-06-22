@@ -7,14 +7,20 @@ import { uploadFile } from '../../middlewares/fileUploader';
 const router = express.Router();
 
 router.post(
+  '/create-conversation',
+  auth(ENUM_USER_ROLE.USER),
+  messageController.createConversation,
+);
+
+router.post(
   '/send-message',
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   uploadFile(),
   messageController.sendMessage,
 );
 router.get(
   '/get-conversation',
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   messageController.conversationUser,
 );
 router.get(

@@ -109,17 +109,11 @@ const updateAdmin = async (
   const { files } = req;
 
   let profile_image = undefined;
-  let cover_image = undefined;
 
   //@ts-ignore
   if (files && files?.profile_image) {
     //@ts-ignore
     profile_image = `/images/profile/${files.profile_image[0].filename}`;
-  }
-  //@ts-ignore
-  if (files && files?.cover_image) {
-    //@ts-ignore
-    cover_image = `/images/profile/${files.cover_image[0].filename}`;
   }
 
   //@ts-ignore
@@ -325,7 +319,8 @@ const myProfile = async (req: Request) => {
   return result;
 };
 const deleteAdmin = async (id: string) => {
-  const result = await User.findByIdAndDelete(id);
+  const result = await Admin.findByIdAndDelete(id);
+
   return result;
 };
 export const AdminService = {
