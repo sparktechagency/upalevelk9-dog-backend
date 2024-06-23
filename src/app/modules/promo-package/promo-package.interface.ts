@@ -17,7 +17,7 @@ import { Model } from 'mongoose';
 export type IPackageDetails = { title: string; status: boolean };
 
 export type IPromoPackage = {
-  promoPackageName: string;
+  packageName: string;
   packageDuration: number;
   promoCode: string;
   status: boolean;

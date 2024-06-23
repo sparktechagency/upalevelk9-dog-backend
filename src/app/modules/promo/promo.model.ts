@@ -9,7 +9,7 @@ const promoSchema = new Schema<IPromo>(
       ref: 'User',
       required: true,
     },
-    promo: {
+    plan_id: {
       type: Schema.Types.ObjectId,
       ref: 'PromoPackage',
       required: true,
