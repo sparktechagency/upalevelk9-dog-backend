@@ -1,66 +1,3 @@
-// import { Schema, model } from 'mongoose';
-// import { IPromoPackage, IPromoItem } from './promo-package.interface';
-
-// const promoSchema = new Schema<IPromoPackage>(
-//   {
-//     title: {
-//       type: String,
-//       required: true,
-//     },
-//     items: [
-//       {
-//         title: {
-//           type: String,
-//         },
-//       },
-//     ],
-//     duration: {
-//       type: Number,
-//       default: 12,
-//     },
-//     status: {
-//       type: Boolean,
-//       default: true,
-//     },
-
-//     promo_code: {
-//       type: String,
-//       required: true,
-//     },
-//   },
-//   {
-//     timestamps: true,
-//     toJSON: {
-//       virtuals: true,
-//     },
-//   },
-// );
-
-// const promoItemSchema = new Schema<IPromoItem>(
-//   {
-//     promo_package_id: {
-//       type: Schema.Types.ObjectId,
-//       ref: 'PromoPackage',
-//       required: true,
-//     },
-//     title: {
-//       type: String,
-//       required: true,
-//     },
-//     status: {
-//       type: Boolean,
-//       default: true,
-//     },
-//   },
-//   {
-//     timestamps: true,
-//     toJSON: {
-//       virtuals: true,
-//     },
-//   },
-// );
-// export const PromoPackage = model<IPromoPackage>('PromoPackage', promoSchema);
-// export const PromoItem = model<IPromoItem>('PromoItem', promoItemSchema);
 import httpStatus from 'http-status';
 import { model, Schema } from 'mongoose';
 import ApiError from '../../../errors/ApiError';
@@ -82,7 +19,15 @@ const packageDetailSchema = new Schema<IPackageDetails>(
   },
   { _id: false },
 );
-
+const promoCodeSchema = new Schema(
+  {
+    code: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
 const promoPackageSchema = new Schema<IPromoPackage, PromoPackageModel>(
   {
     promoPackageName: {
@@ -93,10 +38,7 @@ const promoPackageSchema = new Schema<IPromoPackage, PromoPackageModel>(
       type: Boolean,
       default: true,
     },
-    promoCode: {
-      type: String,
-      required: true,
-    },
+
     packageDuration: {
       type: Number,
       default: 12,
@@ -134,3 +76,4 @@ export const PromoPackage = model<IPromoPackage, PromoPackageModel>(
   'PromoPackage',
   promoPackageSchema,
 );
+export const PromoCode = model('PromoCode', promoCodeSchema);

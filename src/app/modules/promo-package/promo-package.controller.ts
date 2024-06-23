@@ -3,7 +3,6 @@ import catchAsync from '../../../shared/catchasync';
 import sendResponse from '../../../shared/sendResponse';
 import { PromosPlanService } from './promo-package.service';
 
-//! Admin STart
 const adPromos = catchAsync(async (req: Request, res: Response) => {
   const result = await PromosPlanService.addPromo(req.body);
   sendResponse(res, {
@@ -13,7 +12,25 @@ const adPromos = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const addPromoCode = catchAsync(async (req: Request, res: Response) => {
+  const result = await PromosPlanService.addPromoCode(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Promo Code Add successfully',
+    data: result,
+  });
+});
 
+const getPromoCodes = catchAsync(async (req: Request, res: Response) => {
+  const result = await PromosPlanService.getPromoCodes();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Promo Code Retrieved successfully',
+    data: result,
+  });
+});
 const getPromos = catchAsync(async (req: Request, res: Response) => {
   const result = await PromosPlanService.getPromos();
   sendResponse(res, {
@@ -51,4 +68,6 @@ export const PromosPlanController = {
   updatePromoPackage,
   getPromos,
   deletePromos,
+  addPromoCode,
+  getPromoCodes,
 };

@@ -2,16 +2,27 @@
 import httpStatus from 'http-status';
 import ApiError from '../../../errors/ApiError';
 import { IPromoPackage } from './promo-package.interface';
-import { PromoPackage } from './promo-package.model';
+import { PromoCode, PromoPackage } from './promo-package.model';
 
-//! Admin Management Start
 const addPromo = async (payload: IPromoPackage) => {
   const result = await PromoPackage.create(payload);
+  return result;
+};
+const addPromoCode = async (payload: { code: string }) => {
+  const isExist = await PromoCode.findOne({ code: payload.code });
+  if (isExist) {
+    throw new ApiError(httpStatus.ALREADY_REPORTED, 'Promo Code Already Exist');
+  }
+  const result = await PromoCode.create(payload);
   return result;
 };
 
 const getPromos = async () => {
   const result = await PromoPackage.findOne({});
+  return result;
+};
+const getPromoCodes = async () => {
+  const result = await PromoCode.find({});
   return result;
 };
 
@@ -39,4 +50,6 @@ export const PromosPlanService = {
   getPromos,
   deletePromos,
   updatePromoPackage,
+  addPromoCode,
+  getPromoCodes,
 };
