@@ -7,6 +7,7 @@ import User from '../user/user.model';
 import { ISubscription } from './subscriptions.interface';
 import { Subscription } from './subscriptions.model';
 import { Promo } from '../promo/promo.model';
+import Notification from '../notifications/notifications.model';
 
 const upgradeSubscriptionToDB = async (
   user: JwtPayload,
@@ -49,9 +50,17 @@ const upgradeSubscriptionToDB = async (
   };
 
   const result = await Subscription.create(upgradeData);
+  const notification = await Notification.create({
+    user: user,
+    title: 'Promo Package Unlocked',
+    message: `You have successfully unlocked the Subscription package: ${isExistSubscription.packageName}.`,
+    status: false,
+  });
   if (result) {
     await isExistUser.save();
   }
+  //@ts-ignore
+  global.io.to(user.toString()).emit('notification', notification);
   return result;
 };
 

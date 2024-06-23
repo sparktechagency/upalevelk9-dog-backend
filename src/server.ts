@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { app } from './app';
@@ -10,8 +12,6 @@ process.on('uncaughtException', error => {
   process.exit(1);
 });
 
-// let server: Server;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let server: any;
 async function main() {
   try {
@@ -31,7 +31,7 @@ async function main() {
       },
     });
     socket(socketIO);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
     //@ts-ignore
     global.io = socketIO;
   } catch (error) {
