@@ -30,7 +30,7 @@ const promoCodeSchema = new Schema(
 );
 const promoPackageSchema = new Schema<IPromoPackage, PromoPackageModel>(
   {
-    promoPackageName: {
+    packageName: {
       type: String,
       required: true,
     },
@@ -64,7 +64,7 @@ const promoPackageSchema = new Schema<IPromoPackage, PromoPackageModel>(
 
 promoPackageSchema.pre('save', async function (next) {
   const isExist = await PromoPackage.findOne({
-    promoPackageName: this.promoPackageName,
+    packageName: this.packageName,
   });
   if (isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Promo Package already exist!');

@@ -6,6 +6,7 @@ import { SubscriptionPlan } from '../subscriptions-plan/subscriptions-plan.model
 import User from '../user/user.model';
 import { ISubscription } from './subscriptions.interface';
 import { Subscription } from './subscriptions.model';
+import { Promo } from '../promo/promo.model';
 
 const upgradeSubscriptionToDB = async (
   user: JwtPayload,
@@ -21,8 +22,12 @@ const upgradeSubscriptionToDB = async (
     throw new ApiError(httpStatus.BAD_REQUEST, "Plan doesn't exist!");
   }
   const alreadyHavePlan = await Subscription.findOne({ user_id: user.userId });
+  const alreadyHavPromo = await Promo.findOne({ user: user.userId });
   if (alreadyHavePlan) {
     await Subscription.findOneAndDelete({ user_id: user?.userId });
+  }
+  if (alreadyHavPromo) {
+    await Promo.findOneAndDelete({ user: user?.userId });
   }
   isExistUser.isPaid = true;
   isExistUser.isSubscribed = true;
@@ -51,11 +56,21 @@ const upgradeSubscriptionToDB = async (
 };
 
 const mySubscriptionFromDB = async (user: JwtPayload) => {
-  const result = await Subscription.findOne({ user_id: user.userId }).populate({
+  const subscriptions = await Subscription.findOne({
+    user_id: user.userId,
+  }).populate({
     path: 'plan_id',
     select: '-updatedAt -createdAt -__v',
   });
-  return result;
+  const promo = await Promo.findOne({ user: user.userId }).populate({
+    path: 'plan_id',
+    select: '-updatedAt -createdAt -__v',
+  });
+  if (promo && promo.status === 'active') {
+    return promo;
+  } else {
+    return subscriptions;
+  }
 };
 
 export const SubscriptionService = {

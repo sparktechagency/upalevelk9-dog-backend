@@ -6,6 +6,7 @@ import User from '../user/user.model';
 import { Promo } from './promo.model';
 import { IReqUser } from '../user/user.interface';
 import { IPromo } from './promo.inrerface';
+import { Subscription } from '../subscriptions/subscriptions.model';
 
 const insertIntoDB = async (req: Request) => {
   const payload = req.body as IPromo;
@@ -30,6 +31,11 @@ const insertIntoDB = async (req: Request) => {
   }
   const checkPromoCode = await PromoCode.findOne({ code: promo_code });
 
+  const alreadyHavePlan = await Subscription.findOne({ user_id: user });
+
+  if (alreadyHavePlan) {
+    await Subscription.findOneAndDelete({ user_id: user });
+  }
   if (checkAlreadyUnlock && checkAlreadyUnlock.user == (user as any)) {
     throw new ApiError(500, 'You are already unlock this package');
   }
@@ -43,10 +49,10 @@ const insertIntoDB = async (req: Request) => {
   const notification = new Notification({
     user: user,
     title: 'Promo Package Unlocked',
-    message: `You have successfully unlocked the promo package: ${isExistPackage.promoPackageName}.`,
+    message: `You have successfully unlocked the promo package: ${isExistPackage.packageName}.`,
     status: false,
   });
-  payload.promo = isExistPackage._id;
+  payload.plan_id = isExistPackage._id;
   payload.startDate = startDate;
   payload.endDate = endDate;
   payload.user = user as any;
