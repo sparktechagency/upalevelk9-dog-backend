@@ -15,15 +15,17 @@ const upgradeSubscriptionToDB = async (
   if (!isExistUser) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User doesn't exist!");
   }
-  isExistUser.isPaid = true;
-  isExistUser.isSubscribed = true;
 
-  //subscription check
   const isExistSubscription = await SubscriptionPlan.findById(payload.plan_id);
   if (!isExistSubscription) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Plan doesn't exist!");
   }
-
+  const alreadyHavePlan = await Subscription.findOne({ user_id: user.userId });
+  if (alreadyHavePlan) {
+    await Subscription.findOneAndDelete({ user_id: user?.userId });
+  }
+  isExistUser.isPaid = true;
+  isExistUser.isSubscribed = true;
   const startDate = new Date();
   const monthsToAdd = isExistSubscription.packageDuration;
   const endDate = new Date(startDate);

@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import ApiError from '../../../errors/ApiError';
 import Notification from '../notifications/notifications.model';
-import { PromoPackage } from '../promo-package/promo-package.model';
+import { PromoCode, PromoPackage } from '../promo-package/promo-package.model';
 import User from '../user/user.model';
 import { Promo } from './promo.model';
 import { IReqUser } from '../user/user.interface';
@@ -22,18 +22,18 @@ const insertIntoDB = async (req: Request) => {
   const checkAlreadyUnlock = await Promo.findOne({ user });
 
   const isExistPackage = await PromoPackage.findOne({
-    promoCode: promo_code,
     status: true,
   });
 
   if (!isExistPackage) {
     throw new ApiError(404, 'Package not found');
   }
+  const checkPromoCode = await PromoCode.findOne({ code: promo_code });
 
   if (checkAlreadyUnlock && checkAlreadyUnlock.user == (user as any)) {
     throw new ApiError(500, 'You are already unlock this package');
   }
-  if (promo_code !== isExistPackage.promoCode) {
+  if (promo_code !== checkPromoCode?.code) {
     throw new ApiError(500, 'Invalid promo code');
   }
   const startDate = new Date();
