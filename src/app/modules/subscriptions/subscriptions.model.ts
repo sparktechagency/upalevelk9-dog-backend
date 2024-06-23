@@ -33,6 +33,11 @@ const subscriptionSchema = new Schema<ISubscription>(
       enum: ['active', 'inactive'],
       default: 'active',
     },
+    plan_type: {
+      type: String,
+      required: true,
+      enum: ['Basic', 'Standard', 'Premium'],
+    },
     transaction_id: {
       type: String,
       required: true,

@@ -15,13 +15,14 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const allSchedule = catchAsync(async (req: Request, res: Response) => {
-  const result = await ScheduleService.allSchedule();
+  const result = await ScheduleService.allSchedule(req.query);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: 'Schedule retrieved successful',
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 const mySchedule = catchAsync(async (req: Request, res: Response) => {

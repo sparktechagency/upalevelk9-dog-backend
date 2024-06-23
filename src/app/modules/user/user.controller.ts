@@ -200,6 +200,17 @@ const deleteMyAccount = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const blockUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await UserService.blockUser(id);
+  sendResponse<IUser>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User Blocked successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   getAllUsers,
@@ -217,4 +228,5 @@ export const UserController = {
   checkIsValidForgetActivationCode,
   resendActivationCode,
   getOthersProfile,
+  blockUser,
 };

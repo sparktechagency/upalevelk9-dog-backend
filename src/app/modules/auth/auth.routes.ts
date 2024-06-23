@@ -89,10 +89,17 @@ router.post(
 
 router.get(
   '/admin/users',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   UserController.getAllUsers,
 );
-router.get(
+
+router.patch(
+  '/admin/user-block/:id',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  UserController.blockUser,
+);
+
+router.patch(
   '/admin/admins',
   auth(ENUM_USER_ROLE.ADMIN),
   AdminController.getAllAdmin,

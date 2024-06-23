@@ -38,9 +38,13 @@ const upgradeSubscriptionToDB = async (
     status: 'active',
     transaction_id: payload.transaction_id,
     amount: payload.amount,
+    plan_type: isExistSubscription?.packageName,
   };
 
   const result = await Subscription.create(upgradeData);
+  if (result) {
+    await isExistUser.save();
+  }
   return result;
 };
 

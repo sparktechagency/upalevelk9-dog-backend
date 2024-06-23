@@ -27,7 +27,10 @@ import sendEmail from '../../../utils/sendEmail';
 import { registrationSuccess } from './admi.email';
 import Conversation from '../messages/conversation.model';
 import { Request } from 'express';
+import { logger } from '../../../shared/logger';
 
+import mongoose from 'mongoose';
+const { ObjectId } = mongoose.Types;
 //!
 const registrationUser = async (payload: IRegistration) => {
   const { name, email, password } = payload;
@@ -44,10 +47,10 @@ const registrationUser = async (payload: IRegistration) => {
   const newUser = await Admin.create(payload);
   const data = { user: { name: user.name } };
   const adminIds = await Admin.find({}).distinct('_id');
-  // Filter out duplicate admin IDs
-  const uniqueAdminIds = adminIds.filter(
-    (id, index) => adminIds.indexOf(id) === index,
-  );
+
+  const uniqueAdminIds = adminIds
+    .filter((id, index) => adminIds.indexOf(id) === index)
+    .map(id => new ObjectId(id));
   await Conversation.updateMany(
     {},
     { $addToSet: { participants: { $each: uniqueAdminIds } } },
@@ -58,7 +61,7 @@ const registrationUser = async (payload: IRegistration) => {
     subject: 'Congratulations to register successfully',
     html: registrationSuccess(data),
   }).catch(error => {
-    console.error('Failed to send email:', error);
+    logger.error('Failed to send email:', error);
   });
   const { password: omit, ...userWithoutPassword } = newUser.toObject();
 

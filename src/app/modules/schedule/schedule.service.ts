@@ -7,8 +7,8 @@ import { ISchedule } from './schedule.interface';
 import { Schedule } from './schedule.model';
 
 const insertIntoDB = async (payload: ISchedule) => {
-  if (!payload.meet_link || !payload.password || !payload.date) {
-    throw new ApiError(500, 'Meet link, date, and password are required');
+  if (!payload.meet_link || !payload.date || !payload.time) {
+    throw new ApiError(500, 'Meet link, Date and Time is Required');
   }
 
   let userIds = [];
@@ -41,8 +41,15 @@ const insertIntoDB = async (payload: ISchedule) => {
   return schedule;
 };
 
-const allSchedule = async () => {
-  return await Schedule.find();
+const allSchedule = async (query: Record<string, unknown>) => {
+  const postQuery = new QueryBuilder(Schedule.find({}), query).search(['date']);
+  const result = await postQuery.modelQuery;
+  const meta = await postQuery.countTotal();
+
+  return {
+    meta,
+    data: result,
+  };
 };
 const mySchedule = async (user: IReqUser, query: Record<string, unknown>) => {
   const userId = user?.userId;
