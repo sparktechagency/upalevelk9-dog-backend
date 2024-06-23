@@ -1,8 +1,8 @@
 import cron from 'node-cron';
-import { Subscription } from './subscriptions.model';
-import { Promo } from '../promo/promo.model';
 import { logger } from '../../../shared/logger';
+import { Promo } from '../promo/promo.model';
 import User from '../user/user.model';
+import { Subscription } from './subscriptions.model';
 
 cron.schedule('0 0 * * *', async () => {
   try {
@@ -28,6 +28,7 @@ cron.schedule('0 0 * * *', async () => {
     logger.error('Error updating subscription statuses:', error);
   }
 });
+
 cron.schedule('0 0 * * *', async () => {
   try {
     const now = new Date();
