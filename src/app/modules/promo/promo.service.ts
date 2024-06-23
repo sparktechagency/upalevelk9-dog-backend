@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request } from 'express';
 import ApiError from '../../../errors/ApiError';
 import Notification from '../notifications/notifications.model';
@@ -61,6 +62,8 @@ const insertIntoDB = async (req: Request) => {
   if (result) {
     await isExistUser.save();
   }
+  //@ts-ignore
+  global.io.to(user.toString()).emit('notification', notification);
   return result;
 };
 
