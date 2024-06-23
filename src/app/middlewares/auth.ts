@@ -6,6 +6,7 @@ import httpStatus from 'http-status';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 import User from '../modules/user/user.model';
 import Admin from '../modules/admin/admin.model';
+import { ENUM_USER_ROLE } from '../../enums/user';
 
 const auth =
   (...roles: string[]) =>
@@ -33,10 +34,10 @@ const auth =
         req.user = verifyUser;
         const isExist = await User.findById(verifyUser?.userId);
         const checkAdmin = await Admin.findById(verifyUser?.userId);
-        if (verifyUser.role === 'user' && !isExist) {
+        if (verifyUser.role === ENUM_USER_ROLE.USER && !isExist) {
           throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
         }
-        if (verifyUser.role === 'admin' && !checkAdmin) {
+        if (verifyUser.role === ENUM_USER_ROLE.ADMIN && !checkAdmin) {
           throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
         }
 

@@ -22,7 +22,7 @@ const createPost = async (req: Request) => {
   const canAccess =
     (isSubscribed &&
       isSubscribed.status === 'active' &&
-      isSubscribed.plan_type === 'premium') ||
+      isSubscribed.plan_type === 'Premium') ||
     isPromoActive;
 
   if (!canAccess) {

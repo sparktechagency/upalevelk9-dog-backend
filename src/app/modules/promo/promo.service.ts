@@ -17,10 +17,12 @@ const insertIntoDB = async (req: Request) => {
   if (!isExistUser) {
     throw new ApiError(404, 'User does not exist');
   }
+  isExistUser.isPaid = true;
+  isExistUser.isSubscribed = true;
   const checkAlreadyUnlock = await Promo.findOne({ user });
 
   const isExistPackage = await PromoPackage.findOne({
-    promo_code: promo_code,
+    promoCode: promo_code,
     status: true,
   });
 
@@ -31,17 +33,17 @@ const insertIntoDB = async (req: Request) => {
   if (checkAlreadyUnlock && checkAlreadyUnlock.user == (user as any)) {
     throw new ApiError(500, 'You are already unlock this package');
   }
-  if (promo_code !== isExistPackage.promo_code) {
+  if (promo_code !== isExistPackage.promoCode) {
     throw new ApiError(500, 'Invalid promo code');
   }
   const startDate = new Date();
   const endDate = new Date(
-    startDate.getTime() + isExistPackage.duration * 24 * 60 * 60 * 1000,
+    startDate.getTime() + isExistPackage.packageDuration * 24 * 60 * 60 * 1000,
   );
   const notification = new Notification({
     user: user,
     title: 'Promo Package Unlocked',
-    message: `You have successfully unlocked the promo package: ${isExistPackage.title}.`,
+    message: `You have successfully unlocked the promo package: ${isExistPackage.promoPackageName}.`,
     status: false,
   });
   payload.promo = isExistPackage._id;
@@ -49,7 +51,11 @@ const insertIntoDB = async (req: Request) => {
   payload.endDate = endDate;
   payload.user = user as any;
   await notification.save();
-  return await Promo.create(payload);
+  const result = await Promo.create(payload);
+  if (result) {
+    await isExistUser.save();
+  }
+  return result;
 };
 
 export const PromoService = { insertIntoDB };

@@ -514,6 +514,20 @@ const resetPassword = async (payload: {
   await user.save();
 };
 
+const blockUser = async (id: string): Promise<IUser | null> => {
+  const isUserExist = await User.findById(id);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No User Found');
+  }
+  const result = await User.findByIdAndUpdate(
+    { _id: id },
+    { is_block: !isUserExist.is_block },
+    { new: true },
+  );
+
+  return result;
+};
+
 export const UserService = {
   createUser,
   getAllUsers,
@@ -531,4 +545,5 @@ export const UserService = {
   checkIsValidForgetActivationCode,
   resendActivationCode,
   getOthersProfile,
+  blockUser,
 };

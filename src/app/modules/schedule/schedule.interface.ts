@@ -1,6 +1,7 @@
 export type ISchedule = {
   users: [];
   meet_link: string;
-  password: string;
-  date: Date;
+  password?: string;
+  date: string;
+  time: string;
 };

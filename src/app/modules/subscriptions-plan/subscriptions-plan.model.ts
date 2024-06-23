@@ -18,7 +18,7 @@ const packageDetailSchema = new Schema<IPackageDetails>(
       default: false,
     },
   },
-  { _id: false }, // Prevents Mongoose from creating an _id field for these subdocuments
+  { _id: false },
 );
 
 const subscriptionPlanSchema = new Schema<
