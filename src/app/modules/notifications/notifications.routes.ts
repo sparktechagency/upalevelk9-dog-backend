@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get(
   '/get-all-notifications',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   NotificationController.getNotifications,
 );
 router.get(
@@ -17,7 +17,7 @@ router.get(
 );
 router.patch(
   '/update-notification',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
   NotificationController.updateAll,
 );
 router.patch(

@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request } from 'express';
 import { Training } from './training-programs.model';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import ApiError from '../../../errors/ApiError';
+import { CustomRequest } from '../../../interfaces/common';
 
-const insertIntoDB = async (req: Request) => {
+const insertIntoDB = async (req: CustomRequest) => {
   const { files, body } = req;
 
   let image = undefined;
-  //@ts-ignore
+
   if (files && files.image) {
-    //@ts-ignore
     image = `/images/image/${files.image[0].filename}`;
   }
 
@@ -43,14 +42,13 @@ const getSingleTraining = async (id: string) => {
   }
   return result;
 };
-const updateTraining = async (req: Request) => {
+const updateTraining = async (req: CustomRequest) => {
   const { files, body } = req;
   const { id } = req.params;
 
   let image = undefined;
-  //@ts-ignore
+
   if (files && files.image) {
-    //@ts-ignore
     image = `/images/image/${files.image[0].filename}`;
   }
   const isExist = await Training.findById(id);

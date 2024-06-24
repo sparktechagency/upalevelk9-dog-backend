@@ -6,43 +6,21 @@ import { IPost } from './post.interface';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import { IReqUser } from '../user/user.interface';
 import Notification from '../notifications/notifications.model';
-import { userSubscription } from '../../../utils/Subscription';
-import httpStatus from 'http-status';
-
-import Admin from '../admin/admin.model';
-import { Promo } from '../promo/promo.model';
+import { CustomRequest } from '../../../interfaces/common';
 
 //! Add a post
-const createPost = async (req: Request) => {
-  const isSubscribed = await userSubscription(req?.user?.userId);
-
-  const havePromo = await Promo.findOne({ user: req?.user?.userId });
-  const isPromoActive = havePromo && havePromo.status === 'active';
-
-  const canAccess =
-    (isSubscribed &&
-      isSubscribed.status === 'active' &&
-      isSubscribed.plan_type === 'Premium') ||
-    isPromoActive;
-
-  if (!canAccess) {
-    throw new ApiError(
-      httpStatus.FORBIDDEN,
-      'User does not have access to create a post',
-    );
-  }
+const createPost = async (req: CustomRequest) => {
   const { files } = req;
   const data = req.body;
   const user = req.user;
-  //@ts-ignore
+
   if (!data && !files?.image) {
     throw new Error('Data or image missing in the request body!');
   }
-  //@ts-ignore
+
   let image = undefined;
-  //@ts-ignore
+
   if (files && files.image) {
-    //@ts-ignore
     image = `/images/image/${files.image[0].filename}`;
   }
 
@@ -51,7 +29,7 @@ const createPost = async (req: Request) => {
     user: user?.userId,
     ...data,
   });
-  // Create a notification after creating the post
+
   const notification = new Notification({
     user: user?.userId,
     title: 'New Post Created',
@@ -114,36 +92,19 @@ const Posts = async (query: Record<string, unknown>, user: IReqUser) => {
 //! Single Post
 const singlePost = async (req: Request) => {
   const { id } = req.params;
-  const userId = req?.user?.userId;
 
-  const isExistUser = await Admin.findById(userId);
-  const isSubscribed = await userSubscription(userId);
-  const havePromo = await Promo.findOne({ user: userId });
-  const isPromoActive = havePromo && havePromo.status === 'active';
+  const result = await Post.findOne({ _id: id })
+    .populate('user')
+    .populate({
+      path: 'comments',
+      populate: [{ path: 'user', select: 'name profile_image' }],
+    });
 
-  if (
-    isExistUser?.role === 'ADMIN' ||
-    (isSubscribed && isSubscribed.status === 'active') ||
-    isPromoActive
-  ) {
-    const result = await Post.findOne({ _id: id })
-      .populate('user')
-      .populate({
-        path: 'comments',
-        populate: [{ path: 'user', select: 'name profile_image' }],
-      });
-
-    if (!result) {
-      throw new ApiError(404, 'Post not found');
-    }
-
-    return result;
-  } else {
-    throw new ApiError(
-      httpStatus.FORBIDDEN,
-      'Please subscribe or contact admin for access to the community post',
-    );
+  if (!result) {
+    throw new ApiError(404, 'Post not found');
   }
+
+  return result;
 };
 
 //! Delete Post
@@ -155,7 +116,7 @@ const deletePost = async (id: string) => {
   return await Post.findByIdAndDelete(id);
 };
 //! Update post
-const updatePost = async (id: string, req: Request) => {
+const updatePost = async (id: string, req: CustomRequest) => {
   const { files } = req;
   const data = req?.body;
   const post = await Post.findById(id).populate('user');
@@ -166,16 +127,15 @@ const updatePost = async (id: string, req: Request) => {
   const { ...PostData } = data;
 
   let image = undefined;
-  //@ts-ignore
+
   if (files && files.image) {
-    //@ts-ignore
     image = `/images/image/${files.image[0].filename}`;
   }
+  //@ts-ignore
   const updatedPostData: Partial<IPost> = { ...PostData };
   const result = await Post.findOneAndUpdate(
     { _id: id },
     {
-      //@ts-ignore
       image,
       ...updatedPostData,
     },

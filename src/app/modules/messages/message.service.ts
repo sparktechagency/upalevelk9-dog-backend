@@ -2,14 +2,7 @@
 import { Request } from 'express';
 import Conversation from './conversation.model';
 import Message from './message.model';
-import User from '../user/user.model';
-import ApiError from '../../../errors/ApiError';
-import initializeSocketIO from '../../../socket/socket';
-import httpStatus from 'http-status';
 import { IReqUser } from '../user/user.interface';
-import Admin from '../admin/admin.model';
-import { userSubscription } from '../../../utils/Subscription';
-import { Promo } from '../promo/promo.model';
 
 const createConversation = async (req: Request) => {
   const { userId } = req.user as IReqUser;
