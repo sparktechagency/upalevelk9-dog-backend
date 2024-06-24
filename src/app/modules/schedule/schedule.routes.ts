@@ -7,10 +7,14 @@ const router = express.Router();
 
 router.post(
   '/add',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   ScheduleController.insertIntoDB,
 );
-router.get('/all', auth(ENUM_USER_ROLE.ADMIN), ScheduleController.allSchedule);
+router.get(
+  '/all',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  ScheduleController.allSchedule,
+);
 router.get(
   '/my-schedule',
   auth(ENUM_USER_ROLE.USER),
@@ -18,12 +22,12 @@ router.get(
 );
 router.delete(
   '/delete/:id',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   ScheduleController.deleteSchedule,
 );
 router.patch(
   '/update/:id',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   ScheduleController.updateSchedule,
 );
 

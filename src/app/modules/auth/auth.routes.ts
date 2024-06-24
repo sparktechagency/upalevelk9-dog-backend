@@ -45,12 +45,12 @@ router.get(
 //!IDS Work
 router.get(
   '/profile',
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   UserController.getSingleUser,
 );
 router.get(
   '/others-profile/:id',
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   UserController.getOthersProfile,
 );
 router.patch(
@@ -101,25 +101,25 @@ router.patch(
 
 router.patch(
   '/admin/admins',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   AdminController.getAllAdmin,
 );
 router.post(
   '/admin/add-user',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   AdminController.createUser,
 );
 
 //! Admin Update
 router.patch(
   '/admin/edit-profile/:id',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   uploadFile(),
   AdminController.updateAdmin,
 );
 router.get(
   '/admin/profile',
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   AdminController.myProfile,
 );
 router.delete(

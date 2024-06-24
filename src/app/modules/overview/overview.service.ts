@@ -1,3 +1,4 @@
+import { logger } from '../../../shared/logger';
 import {
   generateLastMonthsData,
   generatedLast12MonthData,
@@ -21,7 +22,7 @@ const totalUserAndEarning = async () => {
       totalEarnings,
     };
   } catch (error) {
-    console.error('Error fetching dashboard overview:', error);
+    logger.error('Error fetching dashboard overview:', error);
     throw new Error('Unable to fetch dashboard overview');
   }
 };
