@@ -50,8 +50,9 @@ const insertIntoDB = async (req: Request) => {
   const notification = new Notification({
     user: user,
     title: 'Promo Package Unlocked',
-    message: `You have successfully unlocked the promo package: ${isExistPackage.packageName}.`,
+    message: `Successfully unlocked the promo package: ${isExistPackage.packageName}.`,
     status: false,
+    type: 'admin',
   });
   payload.plan_id = isExistPackage._id;
   payload.startDate = startDate;

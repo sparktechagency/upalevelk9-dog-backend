@@ -34,6 +34,7 @@ const createPost = async (req: CustomRequest) => {
     user: user?.userId,
     title: 'New Post Created',
     message: 'Your new post has been created successfully.',
+    type: 'user',
   });
 
   await notification.save();
@@ -65,9 +66,10 @@ const getMyPosts = async (user: IReqUser, query: Record<string, unknown>) => {
   };
 };
 //! Community Post
-const Posts = async (query: Record<string, unknown>, user: IReqUser) => {
+const Posts = async (query: Record<string, unknown>) => {
   const postQuery = new QueryBuilder(
-    Post.find({ user: { $ne: user?.userId } })
+    // user: { $ne: user?.userId }
+    Post.find({})
       .populate('user')
       .populate({
         path: 'comments',
@@ -165,6 +167,7 @@ async function addComment(req: Request) {
     title: 'New Comment Added',
     message: 'Someone has commented on your post.',
     status: false,
+    type: 'user',
   });
 
   await Promise.all([notification.save(), post.save()]);

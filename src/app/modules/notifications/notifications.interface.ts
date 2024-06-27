@@ -6,4 +6,5 @@ export type INotification = {
   message: string;
   status: boolean;
   user: Types.ObjectId | IUser;
+  type: 'user' | 'admin';
 };

@@ -51,11 +51,16 @@ const getMessages = async (id: string) => {
 //!
 
 const conversationUser = async () => {
-  const result = await Conversation.find({}).populate({
+  const messageConversations = await Message.distinct('conversationId');
+
+  const conversationsWithMessages = await Conversation.find({
+    _id: { $in: messageConversations },
+  }).populate({
     path: 'participants',
     select: '_id name email role profile_image',
   });
-  return result;
+
+  return conversationsWithMessages;
 };
 
 export const messageService = {

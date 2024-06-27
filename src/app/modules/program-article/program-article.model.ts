@@ -23,10 +23,7 @@ const programArticleSchema = new Schema<IArticle>(
       type: String,
       required: true,
     },
-    video_thumbnail: {
-      type: String,
-      required: true,
-    },
+
     training_program: {
       type: Schema.Types.ObjectId,
       ref: 'TrainingProgram',

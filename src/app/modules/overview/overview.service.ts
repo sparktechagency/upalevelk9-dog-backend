@@ -1,3 +1,4 @@
+import QueryBuilder from '../../../builder/QueryBuilder';
 import { logger } from '../../../shared/logger';
 import {
   generateLastMonthsData,
@@ -41,9 +42,24 @@ const Analytics = async () => {
     yearlyIncomeGrowth,
   };
 };
-const purchasedPackageList = async () => {
-  const Result = await Subscription.find({});
-  return Result;
+const purchasedPackageList = async (query: Record<string, unknown>) => {
+  const purchaseQuery = new QueryBuilder(
+    Subscription.find({}).populate('user_id'),
+    query,
+  )
+    .search(['plan_type'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await purchaseQuery.modelQuery;
+  const meta = await purchaseQuery.countTotal();
+
+  return {
+    meta,
+    data: result,
+  };
 };
 
 export const DashboardOverviewService = {

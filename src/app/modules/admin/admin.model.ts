@@ -39,9 +39,7 @@ const AdminSchema = new Schema<IAdmin, AdminModel>(
       type: String,
       enum: ['male', 'female', 'others'],
     },
-    location: {
-      type: String,
-    },
+
     date_of_birth: {
       type: Date,
     },
@@ -50,13 +48,14 @@ const AdminSchema = new Schema<IAdmin, AdminModel>(
       default:
         'https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
     },
-    language: {
-      type: String,
-    },
-    relationship_status: {
+
+    verifyCode: {
       type: String,
     },
 
+    verifyExpire: {
+      type: Date,
+    },
     role: {
       type: String,
       enum: ['ADMIN', 'SUPER_ADMIN'],

@@ -22,7 +22,7 @@ const getPromos = async () => {
   return result;
 };
 const getPromoCodes = async () => {
-  const result = await PromoCode.find({});
+  const result = await PromoCode.find({}).sort({ createdAt: -1 });
   return result;
 };
 
@@ -44,7 +44,13 @@ const deletePromos = async (id: string) => {
   }
   return await PromoPackage.findByIdAndDelete(id);
 };
-
+const deletePromoCode = async (id: string) => {
+  const check = await PromoCode.findById(id);
+  if (!check) {
+    throw new ApiError(404, 'Promo Code not found');
+  }
+  return await PromoCode.findByIdAndDelete(id);
+};
 export const PromosPlanService = {
   addPromo,
   getPromos,
@@ -52,4 +58,5 @@ export const PromosPlanService = {
   updatePromoPackage,
   addPromoCode,
   getPromoCodes,
+  deletePromoCode,
 };

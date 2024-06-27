@@ -7,7 +7,7 @@ import { IReqUser } from '../user/user.interface';
 //get notification only for admin
 const getNotifications: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await NotificationService.getNotifications();
+    const result = await NotificationService.getNotifications(req.query);
     sendResponse(res, {
       statusCode: 200,
       success: true,
@@ -43,6 +43,7 @@ const myNotification: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const result = await NotificationService.myNotification(
       req.user as IReqUser,
+      req.query,
     );
     sendResponse(res, {
       statusCode: 200,

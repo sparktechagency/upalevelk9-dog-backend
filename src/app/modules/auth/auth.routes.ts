@@ -73,6 +73,10 @@ router.post(
 );
 router.post('/admin/refresh-token', AdminController.refreshToken);
 router.post('/admin/forgot-password', AdminController.forgotPass);
+router.post(
+  '/admin/verify-otp',
+  AdminController.checkIsValidForgetActivationCode,
+);
 router.post('/admin/reset-password', AdminController.resetPassword);
 router.patch(
   '/admin/change-password',
@@ -99,7 +103,7 @@ router.patch(
   UserController.blockUser,
 );
 
-router.patch(
+router.get(
   '/admin/admins',
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   AdminController.getAllAdmin,

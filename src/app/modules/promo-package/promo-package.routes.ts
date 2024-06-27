@@ -34,6 +34,11 @@ router.delete(
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   PromosPlanController.deletePromos,
 );
+router.delete(
+  '/delete-code/:id',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  PromosPlanController.deletePromoCode,
+);
 router.patch(
   '/update/:id',
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),

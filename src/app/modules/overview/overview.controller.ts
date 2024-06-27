@@ -22,7 +22,7 @@ const Analytics = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const purchasedPackageList = catchAsync(async (req: Request, res: Response) => {
-  const result = await DashboardOverviewService.purchasedPackageList();
+  const result = await DashboardOverviewService.purchasedPackageList(req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,

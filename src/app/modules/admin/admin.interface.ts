@@ -16,6 +16,8 @@ export type IAdmin = {
   location: string;
   language: string;
   relationship_status: string;
+  verifyCode: string;
+  verifyExpire: Date;
 };
 export type AdminModel = {
   isAdminExist(

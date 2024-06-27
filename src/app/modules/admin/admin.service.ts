@@ -248,19 +248,83 @@ const changePassword = async (
   isAdminExist.password = newPassword;
   isAdminExist.save();
 };
+// //!
+// const forgotPass = async (payload: { email: string }) => {
+//   const admin = await Admin.findOne(
+//     { email: payload.email },
+//     { _id: 1, role: 1 },
+//   );
+
+//   if (!admin) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'Admin does not exist!');
+//   }
+
+//   let profile = null;
+//   if (admin.role === ENUM_USER_ROLE.ADMIN) {
+//     profile = await Admin.findOne({ _id: admin?._id });
+//   }
+
+//   if (!profile) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'Pofile not found!');
+//   }
+
+//   if (!profile.email) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'Email not found!');
+//   }
+
+//   const passResetToken = await jwtHelpers.createResetToken(
+//     { _id: admin._id },
+//     config.jwt.secret as string,
+//     '30m',
+//   );
+
+//   // const resetLink: string = config.resetlink + `token=${passResetToken}`;
+//   const resetLink: string = `${config.resetlink}token=${passResetToken}&email=${profile.email}`;
+//   sendResetEmail(
+//     profile.email,
+//     `
+//       <div>
+//         <p>Hi, ${profile.name}</p>
+//         <p>Your password reset link: <a href=${resetLink}>Click Here</a></p>
+//         <p>Thank you</p>
+//       </div>
+//   `,
+//   );
+// };
+// //!
+// const resetPassword = async (
+//   payload: { email: string; newPassword: string },
+//   token: string,
+// ) => {
+//   const { email, newPassword } = payload;
+//   const admin = await Admin.findOne({ email }, { _id: 1 });
+
+//   if (!admin) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'admin not found!');
+//   }
+
+//   await jwtHelpers.verifyToken(token, config.jwt.secret as string);
+
+//   const password = await bcrypt.hash(
+//     newPassword,
+//     Number(config.bcrypt_salt_rounds),
+//   );
+
+//   await Admin.updateOne({ email }, { password }, { new: true });
+// };
 //!
 const forgotPass = async (payload: { email: string }) => {
-  const admin = await Admin.findOne(
+  const admin = (await Admin.findOne(
     { email: payload.email },
     { _id: 1, role: 1 },
-  );
+  )) as IUser;
 
   if (!admin) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Admin does not exist!');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'admin does not exist!');
   }
 
   let profile = null;
-  if (admin.role === ENUM_USER_ROLE.ADMIN) {
+  if (admin.role === ENUM_USER_ROLE.ADMIN || ENUM_USER_ROLE.SUPER_ADMIN) {
     profile = await Admin.findOne({ _id: admin?._id });
   }
 
@@ -272,38 +336,66 @@ const forgotPass = async (payload: { email: string }) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email not found!');
   }
 
-  const passResetToken = await jwtHelpers.createResetToken(
-    { _id: admin._id },
-    config.jwt.secret as string,
-    '30m',
-  );
+  const activationCode = forgetActivationCode();
+  const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
+  admin.verifyCode = activationCode;
+  admin.verifyExpire = expiryTime;
+  await admin.save();
 
-  // const resetLink: string = config.resetlink + `token=${passResetToken}`;
-  const resetLink: string = `${config.resetlink}token=${passResetToken}&email=${profile.email}`;
   sendResetEmail(
     profile.email,
     `
       <div>
         <p>Hi, ${profile.name}</p>
-        <p>Your password reset link: <a href=${resetLink}>Click Here</a></p>
+        <p>Your password reset Code: ${activationCode}</p>
         <p>Thank you</p>
       </div>
   `,
   );
 };
 //!
-const resetPassword = async (
-  payload: { email: string; newPassword: string },
-  token: string,
-) => {
-  const { email, newPassword } = payload;
+
+const forgetActivationCode = () => {
+  const activationCode = Math.floor(100000 + Math.random() * 900000).toString();
+  return activationCode;
+};
+const checkIsValidForgetActivationCode = async (payload: {
+  code: string;
+  email: string;
+}) => {
+  const admin = await Admin.findOne({ email: payload.email });
+
+  if (!admin) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'admin does not exist!');
+  }
+
+  if (admin.verifyCode !== payload.code) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid reset code!');
+  }
+
+  const currentTime = new Date();
+  if (currentTime > admin.verifyExpire) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Reset code has expired!');
+  }
+
+  return { valid: true };
+};
+//!
+const resetPassword = async (payload: {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}) => {
+  const { email, newPassword, confirmPassword } = payload;
+
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Password didn't match");
+  }
   const admin = await Admin.findOne({ email }, { _id: 1 });
 
   if (!admin) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'admin not found!');
   }
-
-  await jwtHelpers.verifyToken(token, config.jwt.secret as string);
 
   const password = await bcrypt.hash(
     newPassword,
@@ -311,6 +403,11 @@ const resetPassword = async (
   );
 
   await Admin.updateOne({ email }, { password }, { new: true });
+  //@ts-ignore
+  admin.verifyCode = null;
+  //@ts-ignore
+  admin.verifyExpire = null;
+  await admin.save();
 };
 //!
 const myProfile = async (req: Request) => {
@@ -341,4 +438,5 @@ export const AdminService = {
   forgotPass,
   resetPassword,
   deleteAdmin,
+  checkIsValidForgetActivationCode,
 };
