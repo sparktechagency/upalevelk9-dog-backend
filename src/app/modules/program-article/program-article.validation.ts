@@ -18,8 +18,7 @@ const post = z.object({
       .string({
         required_error: 'article_description is required',
       })
-      .min(1)
-      .max(1000),
+      .min(1),
     training_program: z.string({
       required_error: 'training_program  is required',
     }),
@@ -36,13 +35,6 @@ const post = z.object({
       .array(
         z.object({}).refine(() => true, {
           message: 'video is required',
-        }),
-      )
-      .nonempty({ message: 'Image array cannot be empty' }),
-    video_thumbnail: z
-      .array(
-        z.object({}).refine(() => true, {
-          message: 'video_thumbnail is required',
         }),
       )
       .nonempty({ message: 'Image array cannot be empty' }),
@@ -64,7 +56,6 @@ const update = z.object({
     .object({
       thumbnail: z.array(z.object({}).refine(() => true, {})).optional(),
       video: z.array(z.object({}).refine(() => true, {})).optional(),
-      video_thumbnail: z.array(z.object({}).refine(() => true, {})).optional(),
     })
     .optional(),
 });

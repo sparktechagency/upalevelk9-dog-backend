@@ -16,11 +16,7 @@ const insertIntoDB = async (req: CustomRequest) => {
   if (files && files.thumbnail) {
     thumbnail = `/images/thumbnail/${files.thumbnail[0].filename}`;
   }
-  let video_thumbnail = undefined;
 
-  if (files && files.video_thumbnail) {
-    video_thumbnail = `/images/video_thumbnail/${files.video_thumbnail[0].path}`;
-  }
   let video = undefined;
 
   if (files && files.video) {
@@ -28,7 +24,6 @@ const insertIntoDB = async (req: CustomRequest) => {
   }
   const result = await ProgramArticle.create({
     thumbnail,
-    video_thumbnail,
     video,
     ...body,
   });
@@ -36,7 +31,10 @@ const insertIntoDB = async (req: CustomRequest) => {
   return result;
 };
 const getTraining = async (user: IReqUser, query: Record<string, unknown>) => {
-  const trainingQuery = new QueryBuilder(ProgramArticle.find({}), query)
+  const trainingQuery = new QueryBuilder(
+    ProgramArticle.find({}).populate('training_program'),
+    query,
+  )
     .search(['article_title', 'article_name'])
     .filter()
     .sort()
@@ -82,6 +80,7 @@ const getTrainingByProgram = async (req: Request) => {
 };
 const updateTraining = async (req: CustomRequest) => {
   const { files, body } = req;
+  console.log(files, body);
   const { id } = req.params;
 
   let thumbnail = undefined;
@@ -89,11 +88,7 @@ const updateTraining = async (req: CustomRequest) => {
   if (files && files.thumbnail) {
     thumbnail = `/images/thumbnail/${files.thumbnail[0].filename}`;
   }
-  let video_thumbnail = undefined;
 
-  if (files && files.video_thumbnail) {
-    video_thumbnail = `/images/video_thumbnail/${files.video_thumbnail[0].path}`;
-  }
   let video = undefined;
 
   if (files && files.video) {
@@ -108,7 +103,6 @@ const updateTraining = async (req: CustomRequest) => {
     { _id: id },
     {
       thumbnail,
-      video_thumbnail,
       video,
       ...updateData,
     },

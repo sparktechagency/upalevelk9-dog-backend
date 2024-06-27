@@ -2,11 +2,34 @@ import { Request } from 'express';
 import Notification from './notifications.model';
 import ApiError from '../../../errors/ApiError';
 import { IReqUser } from '../user/user.interface';
+import QueryBuilder from '../../../builder/QueryBuilder';
 
 //Get
-const getNotifications = async () => {
-  const result = await Notification.find().sort({ createdAt: -1 });
-  return result;
+const getNotifications = async (query: Record<string, unknown>) => {
+  const notificationQuery = new QueryBuilder(
+    Notification.find({ type: 'admin' }),
+    query,
+  )
+    .search(['title'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await notificationQuery.modelQuery;
+  const meta = await notificationQuery.countTotal();
+
+  const unreadNotification = await Notification.countDocuments({
+    status: false,
+  });
+  const readNotification = await Notification.countDocuments({ status: true });
+
+  return {
+    unreadNotification,
+    readNotification,
+    meta,
+    data: result,
+  };
 };
 //Update
 const updateNotification = async (req: Request) => {
@@ -31,10 +54,29 @@ const updateAll = async () => {
   ).sort({ createdAt: -1 });
   return result;
 };
-const myNotification = async (user: IReqUser) => {
-  return await Notification.find({ user: user.userId }).sort({ createdAt: -1 });
-};
 
+const myNotification = async (
+  user: IReqUser,
+  query: Record<string, unknown>,
+) => {
+  const notificationQuery = new QueryBuilder(
+    Notification.find({ user: user.userId }),
+    query,
+  )
+    .search(['title'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await notificationQuery.modelQuery;
+  const meta = await notificationQuery.countTotal();
+
+  return {
+    meta,
+    data: result,
+  };
+};
 export const NotificationService = {
   getNotifications,
   updateNotification,

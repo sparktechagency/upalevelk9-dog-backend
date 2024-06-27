@@ -25,7 +25,7 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const Posts = catchAsync(async (req: Request, res: Response) => {
-  const result = await PostService.Posts(req.query, req.user as IReqUser);
+  const result = await PostService.Posts(req.query);
 
   sendResponse(res, {
     statusCode: 200,

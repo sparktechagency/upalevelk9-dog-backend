@@ -51,16 +51,18 @@ const upgradeSubscriptionToDB = async (
 
   const result = await Subscription.create(upgradeData);
   const notification = await Notification.create({
-    user: user,
-    title: 'Promo Package Unlocked',
-    message: `You have successfully unlocked the Subscription package: ${isExistSubscription.packageName}.`,
+    user: user.userId,
+    title: 'Subscription Unlocked',
+    message: `Successfully unlocked the Subscription package: ${isExistSubscription.packageName}.`,
     status: false,
+    type: 'admin',
   });
   if (result) {
     await isExistUser.save();
   }
   //@ts-ignore
   global.io.to(user.toString()).emit('notification', notification);
+  // global.io.to(user.toString()).emit('adminNotification', notification);
   return result;
 };
 

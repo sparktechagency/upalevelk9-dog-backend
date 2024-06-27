@@ -62,6 +62,15 @@ const deletePromos = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const deletePromoCode = catchAsync(async (req: Request, res: Response) => {
+  const result = await PromosPlanService.deletePromoCode(req.params.id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Promo Code delete successfully',
+    data: result,
+  });
+});
 
 export const PromosPlanController = {
   adPromos,
@@ -70,4 +79,5 @@ export const PromosPlanController = {
   deletePromos,
   addPromoCode,
   getPromoCodes,
+  deletePromoCode,
 };

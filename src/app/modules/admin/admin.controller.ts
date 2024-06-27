@@ -152,9 +152,8 @@ const forgotPass = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const token = req.headers.authorization || '';
-  await AdminService.resetPassword(req.body, token);
-
+  // const token = req.headers.authorization || '';
+  await AdminService.resetPassword(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -171,6 +170,19 @@ const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const checkIsValidForgetActivationCode = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await AdminService.checkIsValidForgetActivationCode(
+      req.body,
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Success!',
+      data: result,
+    });
+  },
+);
 export const AdminController = {
   createUser,
   getAllUsers,
@@ -186,4 +198,5 @@ export const AdminController = {
   forgotPass,
   resetPassword,
   deleteAdmin,
+  checkIsValidForgetActivationCode,
 };

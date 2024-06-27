@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, RequestHandler, Response } from 'express';
 import { UserService } from './user.service';
 import sendResponse from '../../../shared/sendResponse';
@@ -71,6 +72,7 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
     statusCode: 200,
     success: true,
     message: 'User retrieved successfully',
+    //@ts-ignore
     data: result,
   });
 });
@@ -80,6 +82,7 @@ const getOthersProfile = catchAsync(async (req: Request, res: Response) => {
     statusCode: 200,
     success: true,
     message: 'User retrieved successfully',
+    //@ts-ignore
     data: result,
   });
 });

@@ -40,8 +40,9 @@ const auth =
         if (verifyUser.role === ENUM_USER_ROLE.ADMIN && !checkAdmin) {
           throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
         }
+        // console.log(roles);
+        // console.log(verifyUser.role);
 
-        //guard user
         if (roles.length && !roles.includes(verifyUser.role)) {
           throw new ApiError(
             httpStatus.FORBIDDEN,
@@ -53,6 +54,7 @@ const auth =
     } catch (error) {
       next(error);
     }
+    // next();
   };
 
 export default auth;
