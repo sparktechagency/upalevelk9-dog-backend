@@ -37,11 +37,15 @@ const auth =
         if (verifyUser.role === ENUM_USER_ROLE.USER && !isExist) {
           throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
         }
-        if (verifyUser.role === ENUM_USER_ROLE.ADMIN && !checkAdmin) {
+        // if (verifyUser.role === ENUM_USER_ROLE.ADMIN && !checkAdmin) {
+        //   throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+        // }
+        if (
+          verifyUser.role === ENUM_USER_ROLE.ADMIN ||
+          (verifyUser.role === ENUM_USER_ROLE.SUPER_ADMIN && !checkAdmin)
+        ) {
           throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
         }
-        // console.log(roles);
-        // console.log(verifyUser.role);
 
         if (roles.length && !roles.includes(verifyUser.role)) {
           throw new ApiError(
