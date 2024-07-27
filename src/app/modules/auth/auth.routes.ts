@@ -36,11 +36,11 @@ router.post('/reset-password', UserController.resetPassword);
 router.post('/resend', UserController.resendActivationCode);
 router.post('/verify-otp', UserController.checkIsValidForgetActivationCode);
 
-router.get(
-  '/admin/users',
-  auth(ENUM_USER_ROLE.ADMIN),
-  UserController.getAllUsers,
-);
+// router.get(
+//   '/admin/users',
+//   auth(ENUM_USER_ROLE.ADMIN),
+//   UserController.getAllUsers,
+// );
 
 //!IDS Work
 router.get(
