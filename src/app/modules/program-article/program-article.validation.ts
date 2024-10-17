@@ -31,13 +31,13 @@ const post = z.object({
         }),
       )
       .nonempty({ message: 'Image array cannot be empty' }),
-    video: z
-      .array(
-        z.object({}).refine(() => true, {
-          message: 'video is required',
-        }),
-      )
-      .nonempty({ message: 'Image array cannot be empty' }),
+    // video: z
+    //   .array(
+    //     z.object({}).refine(() => true, {
+    //       message: 'video is required',
+    //     }),
+    //   )
+    //   .nonempty({ message: 'Image array cannot be empty' }),
   }),
 });
 const update = z.object({
