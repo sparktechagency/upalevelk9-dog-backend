@@ -23,7 +23,7 @@ export const handleChunkUpload = (req: Request, res: Response) => {
       return res.json({
         status: 'completed',
         message: 'File uploaded successfully!',
-        videoUrl: `video/${originalname}`,
+        videoUrl: `/video/${originalname}`,
       });
     } else {
       return res.json({ status: 'chunkReceived', message: 'Chunk received!' });
