@@ -10,14 +10,14 @@ const router = express.Router();
 
 router.post(
   '/add',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  // auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   uploadFile(),
   validateRequest(ProgramArticleValidation.post),
   ProgramArticleController.insertIntoDB,
 );
 router.get(
   '/all',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
+  // auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
   ProgramArticleController.getTraining,
 );
 router.get(

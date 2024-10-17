@@ -10,21 +10,21 @@ import { CustomRequest } from '../../../interfaces/common';
 
 const insertIntoDB = async (req: CustomRequest) => {
   const { files, body } = req;
-
+  console.log('body', body);
   let thumbnail = undefined;
 
   if (files && files.thumbnail) {
     thumbnail = `/images/thumbnail/${files.thumbnail[0].filename}`;
   }
 
-  let video = undefined;
+  // let video = undefined;
 
-  if (files && files.video) {
-    video = `/video/${files.video[0].filename}`;
-  }
+  // if (files && files.video) {
+  //   video = `/video/${files.video[0].filename}`;
+  // }
   const result = await ProgramArticle.create({
     thumbnail,
-    video,
+    // video,
     ...body,
   });
 
@@ -89,11 +89,11 @@ const updateTraining = async (req: CustomRequest) => {
     thumbnail = `/images/thumbnail/${files.thumbnail[0].filename}`;
   }
 
-  let video = undefined;
+  // let video = undefined;
 
-  if (files && files.video) {
-    video = `/video/${files.video[0].filename}`;
-  }
+  // if (files && files.video) {
+  //   video = `/video/${files.video[0].filename}`;
+  // }
   const isExist = await ProgramArticle.findById(id);
   if (!isExist) {
     throw new ApiError(404, 'Training program not found');
@@ -103,7 +103,7 @@ const updateTraining = async (req: CustomRequest) => {
     { _id: id },
     {
       thumbnail,
-      video,
+      // video,
       ...updateData,
     },
     {
