@@ -23,11 +23,10 @@ async function main() {
     server = app.listen(port, config.base_url as string, () => {
       logger.info(`Example app listening on port ${config.port}`);
     });
-
     const socketIO = new Server(server, {
       pingTimeout: 60000,
       cors: {
-        origin: 'http://localhost:3004',
+        origin: 'http://143.198.3.51:3000',
       },
     });
     socket(socketIO);
