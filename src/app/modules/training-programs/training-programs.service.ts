@@ -3,6 +3,7 @@ import { Training } from './training-programs.model';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import ApiError from '../../../errors/ApiError';
 import { CustomRequest } from '../../../interfaces/common';
+import { ProgramArticle } from '../program-article/program-article.model';
 
 const insertIntoDB = async (req: CustomRequest) => {
   const { files, body } = req;
@@ -75,7 +76,12 @@ const deleteTraining = async (req: Request) => {
   if (!isExist) {
     throw new ApiError(404, 'Training program not found');
   }
-  return await Training.findByIdAndDelete(id);
+
+  const result = await Training.findByIdAndDelete(id);
+
+  await ProgramArticle.deleteMany({ training_program: id });
+
+  return result;
 };
 
 export const TrainingService = {
