@@ -257,7 +257,6 @@ const loginUser = async (payload: ILoginUser) => {
   if (!isUserExist) {
     throw new ApiError(404, 'User does not exist');
   }
-
   if (
     isUserExist.password &&
     !(await User.isPasswordMatched(password, isUserExist.password))

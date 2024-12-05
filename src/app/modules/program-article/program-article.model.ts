@@ -29,6 +29,10 @@ const programArticleSchema = new Schema<IArticle>(
       ref: 'TrainingProgram',
       required: true,
     },
+    serial: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

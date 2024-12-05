@@ -22,10 +22,13 @@ const insertIntoDB = async (req: CustomRequest) => {
   // if (files && files.video) {
   //   video = `/video/${files.video[0].filename}`;
   // }
+  const totalProgram = await ProgramArticle.countDocuments();
+  console.log(totalProgram);
   const result = await ProgramArticle.create({
     thumbnail,
     // video,
     ...body,
+    serial: totalProgram + 1,
   });
 
   return result;
@@ -122,6 +125,31 @@ const deleteTraining = async (req: Request) => {
   return await ProgramArticle.findByIdAndDelete(id);
 };
 
+const swapArticleOrder = async (payload: any) => {
+  const { draggedArticleId, targetArticleId } = payload;
+
+  try {
+    // Find both articles
+    const draggedArticle = await ProgramArticle.findById(draggedArticleId);
+    const targetArticle = await ProgramArticle.findById(targetArticleId);
+
+    if (!draggedArticle || !targetArticle) {
+      throw new ApiError(httpStatus.BAD_GATEWAY, 'Nice problem');
+    }
+
+    // Swap serial numbers
+    const tempSerial = draggedArticle.serial;
+    draggedArticle.serial = targetArticle.serial;
+    targetArticle.serial = tempSerial;
+
+    // Save both articles
+    await draggedArticle.save();
+    await targetArticle.save();
+  } catch (error) {
+    console.error('Error swapping article order:', error);
+  }
+};
+
 export const ProgramArticleService = {
   insertIntoDB,
   getTraining,
@@ -130,4 +158,5 @@ export const ProgramArticleService = {
   getSingleTraining,
   getSingleTrainingByProgram,
   getTrainingByProgram,
+  swapArticleOrder,
 };
