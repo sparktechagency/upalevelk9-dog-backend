@@ -13,6 +13,7 @@ export const app: Application = express();
 import multer from 'multer';
 
 import { handleChunkUpload } from './helpers/handleChunkVideoUpload';
+import { ProgramArticle } from './app/modules/program-article/program-article.model';
 const upload = multer({ dest: 'uploads/' });
 app.use(
   cors({
@@ -26,6 +27,7 @@ app.use(
       'http://localhost:5173',
       'http://192.168.10.153:3000',
       'http://localhost:3004',
+      'http://192.168.10.11:3000',
     ],
     credentials: true,
   }),
@@ -42,7 +44,39 @@ app.use(bodyParser.json());
 app.use(express.static('uploads'));
 //All Routes
 app.use('/', routes);
+app.post('/api/articles/reorder', async (req, res) => {
+  const { articles } = req.body;
 
+  try {
+    for (const article of articles) {
+      await ProgramArticle.findByIdAndUpdate(article.id, {
+        serial: article.serial,
+      });
+    }
+
+    res.status(200).json({ message: 'Reordered successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to reorder' });
+  }
+});
+app.put('/update-serial/:id', async (req, res) => {
+  const { id } = req.params;
+  const { serial } = req.body;
+
+  try {
+    const article = await ProgramArticle.findById(id);
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' });
+    }
+
+    article.serial = serial;
+    await article.save();
+
+    res.status(200).json({ message: 'Serial updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update serial', error });
+  }
+});
 // chunk
 // app.post('/upload', upload.single('chunk'), (req: Request, res: Response) => {
 //   const chunk = req.file;

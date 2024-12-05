@@ -159,7 +159,7 @@ const login = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   if (!isUserExist) {
     throw new ApiError(404, 'Admin does not exist');
   }
-
+  console.log('password', isUserExist.password, payload.password);
   if (
     isUserExist.password &&
     !(await Admin.isPasswordMatched(password, isUserExist.password))
