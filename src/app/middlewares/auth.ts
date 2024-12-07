@@ -13,6 +13,7 @@ const auth =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const tokenWithBearer = req.headers.authorization;
+      // console.log('tokenWithBearer', tokenWithBearer);
 
       if (!tokenWithBearer) {
         throw new ApiError(
@@ -35,17 +36,24 @@ const auth =
         const isExist = await User.findById(verifyUser?.userId);
         const checkAdmin = await Admin.findById(verifyUser?.userId);
         if (verifyUser.role === ENUM_USER_ROLE.USER && !isExist) {
-          throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+          throw new ApiError(
+            httpStatus.UNAUTHORIZED,
+            'You are not authorized 1',
+          );
         }
         // if (verifyUser.role === ENUM_USER_ROLE.ADMIN && !checkAdmin) {
         //   throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
         // }
-        if (
-          verifyUser.role === ENUM_USER_ROLE.ADMIN ||
-          (verifyUser.role === ENUM_USER_ROLE.SUPER_ADMIN && !checkAdmin)
-        ) {
-          throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
-        }
+        //!TODO: need to comment out this
+        // if (
+        //   verifyUser.role === ENUM_USER_ROLE.ADMIN ||
+        //   (verifyUser.role === ENUM_USER_ROLE.SUPER_ADMIN && !checkAdmin)
+        // ) {
+        //   throw new ApiError(
+        //     httpStatus.UNAUTHORIZED,
+        //     'You are not authorized 2',
+        //   );
+        // }
 
         if (roles.length && !roles.includes(verifyUser.role)) {
           throw new ApiError(

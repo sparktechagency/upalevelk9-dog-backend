@@ -13,6 +13,7 @@ export const app: Application = express();
 import multer from 'multer';
 
 import { handleChunkUpload } from './helpers/handleChunkVideoUpload';
+import { ProgramArticle } from './app/modules/program-article/program-article.model';
 const upload = multer({ dest: 'uploads/' });
 app.use(
   cors({
@@ -26,6 +27,7 @@ app.use(
       'http://localhost:5173',
       'http://192.168.10.153:3000',
       'http://localhost:3004',
+      'http://192.168.10.11:3000',
     ],
     credentials: true,
   }),
@@ -43,45 +45,24 @@ app.use(express.static('uploads'));
 //All Routes
 app.use('/', routes);
 
-// chunk
-// app.post('/upload', upload.single('chunk'), (req: Request, res: Response) => {
-//   const chunk = req.file;
-//   const { originalname, chunkIndex, totalChunks } = req.body;
+app.put('/program-article/update-serial', async (req, res) => {
+  const updatedArticles = req.body;
+  // console.log('updated articles: ' + updatedArticles);
 
-//   // Define the path where to store the final file
-//   const uploadDir = path.join(__dirname, '../uploads/video');
-//   const filePath = path.join(uploadDir, originalname);
+  try {
+    for (const { key, serial } of updatedArticles) {
+      await ProgramArticle.updateOne({ _id: key }, { $set: { serial } });
+    }
+    res
+      .status(200)
+      .json({ message: 'Serials updated successfully', success: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error updating serials', success: false, error });
+  }
+});
 
-//   // Create uploads directory if it doesn't exist
-//   if (!fs.existsSync(uploadDir)) {
-//     fs.mkdirSync(uploadDir);
-//   }
-
-//   // Append the chunk to the final file
-//   fs.appendFileSync(filePath, fs.readFileSync(chunk?.path as string));
-
-//   // Delete the chunk file from the temporary directory
-//   fs.unlinkSync(chunk?.path as string);
-
-//   // Append the chunk to the final file
-//   if (chunk) {
-//     if (Number(chunkIndex) + 1 === Number(totalChunks)) {
-//       // All chunks uploaded successfully
-//       return res.json({
-//         status: 'completed',
-//         message: 'File uploaded successfully!',
-//         videoUrl: `video/${originalname}`, // Send the final video URL back to the client
-//       });
-//     } else {
-//       // Chunk received, continue uploading
-//       return res.json({ status: 'chunkReceived', message: 'Chunk received!' });
-//     }
-//   } else {
-//     return res
-//       .status(400)
-//       .json({ status: 'error', message: 'No chunk received' });
-//   }
-// });
 app.post('/upload', upload.single('chunk'), handleChunkUpload);
 
 // app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));

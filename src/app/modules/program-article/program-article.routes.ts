@@ -47,4 +47,6 @@ router.delete(
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   ProgramArticleController.deleteTraining,
 );
+
+router.patch('/swap-order', ProgramArticleController.swapArticleOrder);
 export const ProgramArticleRoutes = router;
