@@ -28,6 +28,7 @@ app.use(
       'http://192.168.10.153:3000',
       'http://localhost:3004',
       'http://192.168.10.11:3000',
+      'http://143.198.3.51:3000',
     ],
     credentials: true,
   }),
@@ -47,7 +48,7 @@ app.use('/', routes);
 
 app.put('/program-article/update-serial', async (req, res) => {
   const updatedArticles = req.body;
-  // console.log('updated articles: ' + updatedArticles);
+  console.log('updated articles: ' + updatedArticles);
 
   try {
     for (const { key, serial } of updatedArticles) {
