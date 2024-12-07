@@ -52,6 +52,7 @@ app.put('/program-article/update-serial', async (req, res) => {
 
   try {
     for (const { key, serial } of updatedArticles) {
+      console.log('key', key, 'serial', serial);
       await ProgramArticle.updateOne({ _id: key }, { $set: { serial } });
     }
     res
