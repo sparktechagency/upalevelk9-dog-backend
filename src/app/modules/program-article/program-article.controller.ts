@@ -83,6 +83,16 @@ const deleteTraining = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const swapArticleOrder = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProgramArticleService.swapArticleOrder(req.body);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Training Programs order updated successful',
+    data: result,
+  });
+});
 
 export const ProgramArticleController = {
   insertIntoDB,
@@ -92,4 +102,5 @@ export const ProgramArticleController = {
   getSingleTraining,
   getSingleTrainingByProgram,
   getTrainingByProgram,
+  swapArticleOrder,
 };

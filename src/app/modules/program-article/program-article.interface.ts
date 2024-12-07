@@ -9,4 +9,5 @@ export type IArticle = {
   article_name: string;
   article_description: string;
   training_program: Types.ObjectId | ITraining;
+  serial: number;
 };
