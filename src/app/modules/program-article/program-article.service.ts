@@ -35,7 +35,7 @@ const insertIntoDB = async (req: CustomRequest) => {
 };
 const getTraining = async (user: IReqUser, query: Record<string, unknown>) => {
   const trainingQuery = new QueryBuilder(
-    ProgramArticle.find({}).populate('training_program'),
+    ProgramArticle.find({}).populate('training_program').sort({ serial: 1 }),
     query,
   )
     .search(['article_title', 'article_name'])
