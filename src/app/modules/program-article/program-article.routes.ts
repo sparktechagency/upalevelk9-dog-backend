@@ -17,7 +17,7 @@ router.post(
 );
 router.get(
   '/all',
-  // auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
   ProgramArticleController.getTraining,
 );
 router.get(
