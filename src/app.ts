@@ -49,11 +49,9 @@ app.use('/', routes);
 
 app.put('/program-article/update-serial', async (req, res) => {
   const updatedArticles = req.body;
-  console.log('updated articles: ' + updatedArticles);
 
   try {
     for (const { key, serial } of updatedArticles) {
-      console.log('key', key, 'serial', serial);
       await ProgramArticle.updateOne({ _id: key }, { $set: { serial } });
     }
     res
@@ -66,22 +64,18 @@ app.put('/program-article/update-serial', async (req, res) => {
   }
 });
 
-// PUT endpoint to update the program order (serial numbers)
 app.put('/update-program-order', async (req, res) => {
-  const programs = req.body; // This is the array with updated serials
+  const programs = req.body;
 
   try {
-    // Loop through each program and update its serial
     for (const program of programs) {
       await Training.findByIdAndUpdate(program._id, { serial: program.serial });
     }
 
-    // Respond with a success message
     res
       .status(200)
       .json({ message: 'Program order updated successfully!', success: true });
   } catch (error) {
-    console.error('Error updating program order:', error);
     res.status(500).json({ message: 'Failed to update program order.' });
   }
 });
