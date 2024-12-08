@@ -8,6 +8,7 @@ import { ISubscription } from './subscriptions.interface';
 import { Subscription } from './subscriptions.model';
 import { Promo } from '../promo/promo.model';
 import Notification from '../notifications/notifications.model';
+import { Payment } from '../payment/payment.model';
 
 const upgradeSubscriptionToDB = async (
   user: JwtPayload,
@@ -50,6 +51,14 @@ const upgradeSubscriptionToDB = async (
   };
 
   const result = await Subscription.create(upgradeData);
+  //TODO: save payment data--
+  await Payment.create({
+    user: user.userId,
+    plan_id: payload.plan_id,
+    amount: payload.amount,
+    transaction_id: payload.transaction_id,
+    note: 'Subscription upgrade',
+  });
   const notification = await Notification.create({
     user: user.userId,
     title: 'Subscription Unlocked',
