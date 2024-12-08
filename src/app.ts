@@ -14,6 +14,7 @@ import multer from 'multer';
 
 import { handleChunkUpload } from './helpers/handleChunkVideoUpload';
 import { ProgramArticle } from './app/modules/program-article/program-article.model';
+import { Training } from './app/modules/training-programs/training-programs.model';
 const upload = multer({ dest: 'uploads/' });
 app.use(
   cors({
@@ -62,6 +63,26 @@ app.put('/program-article/update-serial', async (req, res) => {
     res
       .status(500)
       .json({ message: 'Error updating serials', success: false, error });
+  }
+});
+
+// PUT endpoint to update the program order (serial numbers)
+app.put('/update-program-order', async (req, res) => {
+  const programs = req.body; // This is the array with updated serials
+
+  try {
+    // Loop through each program and update its serial
+    for (const program of programs) {
+      await Training.findByIdAndUpdate(program._id, { serial: program.serial });
+    }
+
+    // Respond with a success message
+    res
+      .status(200)
+      .json({ message: 'Program order updated successfully!', success: true });
+  } catch (error) {
+    console.error('Error updating program order:', error);
+    res.status(500).json({ message: 'Failed to update program order.' });
   }
 });
 

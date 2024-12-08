@@ -10,7 +10,7 @@ import { CustomRequest } from '../../../interfaces/common';
 
 const insertIntoDB = async (req: CustomRequest) => {
   const { files, body } = req;
-  console.log('body', body);
+  // console.log('body', body);
   let thumbnail = undefined;
 
   if (files && files.thumbnail) {
@@ -23,7 +23,7 @@ const insertIntoDB = async (req: CustomRequest) => {
   //   video = `/video/${files.video[0].filename}`;
   // }
   const totalProgram = await ProgramArticle.countDocuments();
-  console.log(totalProgram);
+  // console.log(totalProgram);
   const result = await ProgramArticle.create({
     thumbnail,
     // video,
