@@ -13,15 +13,19 @@ const insertIntoDB = async (req: CustomRequest) => {
   if (files && files.image) {
     image = `/images/image/${files.image[0].filename}`;
   }
-
+  const traningCount = await Training.countDocuments();
   const result = await Training.create({
     image,
     ...body,
+    serial: traningCount + 1,
   });
   return result;
 };
 const getTraining = async (query: Record<string, unknown>) => {
-  const trainingQuery = new QueryBuilder(Training.find({}), query)
+  const trainingQuery = new QueryBuilder(
+    Training.find({}).sort({ serial: 1 }),
+    query,
+  )
     .search(['title', 'description'])
     .filter()
     .sort()

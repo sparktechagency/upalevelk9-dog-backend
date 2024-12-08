@@ -11,6 +11,10 @@ const trainingSchema = new Schema<ITraining>(
       type: String,
       required: true,
     },
+    serial: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
