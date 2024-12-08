@@ -33,8 +33,8 @@ const Analytics = async () => {
   const monthlyUserGrowth = await generateLastMonthsData(User, 1);
   const yearlyUserGrowth = await generatedLast12MonthData(User);
   //! Income
-  const monthlyIncomeGrowth = await generateLastMonthsData(User, 1);
-  const yearlyIncomeGrowth = await generatedLast12MonthData(User);
+  const monthlyIncomeGrowth = await generateLastMonthsData(Payment, 1);
+  const yearlyIncomeGrowth = await generatedLast12MonthData(Payment);
   return {
     monthlyUserGrowth,
     yearlyUserGrowth,
