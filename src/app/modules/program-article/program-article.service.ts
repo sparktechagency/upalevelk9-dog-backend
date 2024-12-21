@@ -75,7 +75,9 @@ const getSingleTrainingByProgram = async (req: Request) => {
 };
 const getTrainingByProgram = async (req: Request) => {
   const { id } = req.params;
-  const result = await ProgramArticle.find({ training_program: id });
+  const result = await ProgramArticle.find({ training_program: id }).sort({
+    serial: 1,
+  });
   if (!result) {
     throw new ApiError(404, 'Program article not found');
   }
