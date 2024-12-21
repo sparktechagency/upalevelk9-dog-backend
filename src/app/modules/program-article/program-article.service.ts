@@ -85,7 +85,7 @@ const getTrainingByProgram = async (req: Request) => {
 };
 const updateTraining = async (req: CustomRequest) => {
   const { files, body } = req;
-  console.log(files, body);
+  // console.log(files, body);
   const { id } = req.params;
 
   let thumbnail = undefined;
