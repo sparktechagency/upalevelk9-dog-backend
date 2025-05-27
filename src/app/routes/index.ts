@@ -14,6 +14,7 @@ import { PromoPackageRoutes } from '../modules/promo-package/promo-package.route
 import { PromoRoutes } from '../modules/promo/promo.routes';
 import { FeedbackRoutes } from '../modules/feedback/feedback.routes';
 import { PaymentRoutes } from '../modules/payment/payment.routes';
+import { subscriptionShowRoutes } from '../modules/subscriptionShow/subscriptionShow.routes';
 
 const router = express.Router();
 
@@ -77,6 +78,10 @@ const moduleRoutes = [
   {
     path: '/payment',
     route: PaymentRoutes,
+  },
+  {
+    path: '/subscription-show',
+    route: subscriptionShowRoutes,
   },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));
