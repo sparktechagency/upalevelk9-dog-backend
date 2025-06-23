@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import catchAsync from '../../../shared/catchasync';
 import { TrainingService } from './training-programs.service';
 import sendResponse from '../../../shared/sendResponse';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
-  const result = await TrainingService.insertIntoDB(req);
+  const result = await TrainingService.insertIntoDB(req as any);
 
   sendResponse(res, {
     statusCode: 200,
@@ -35,7 +36,7 @@ const getSingleTraining = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updateTraining = catchAsync(async (req: Request, res: Response) => {
-  const result = await TrainingService.updateTraining(req);
+  const result = await TrainingService.updateTraining(req as any);
 
   sendResponse(res, {
     statusCode: 200,
