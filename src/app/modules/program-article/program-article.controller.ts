@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response } from 'express';
 import catchAsync from '../../../shared/catchasync';
@@ -8,7 +9,7 @@ import { IReqUser } from '../user/user.interface';
 import { IArticle } from './program-article.interface';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProgramArticleService.insertIntoDB(req);
+  const result = await ProgramArticleService.insertIntoDB(req as any);
 
   sendResponse(res, {
     statusCode: 200,
@@ -64,7 +65,7 @@ const getTrainingByProgram = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updateTraining = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProgramArticleService.updateTraining(req);
+  const result = await ProgramArticleService.updateTraining(req as any);
 
   sendResponse(res, {
     statusCode: 200,

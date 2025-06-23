@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import catchAsync from '../../../shared/catchasync';
 import { PostService } from './post.service';
@@ -5,7 +6,7 @@ import sendResponse from '../../../shared/sendResponse';
 import { IReqUser } from '../user/user.interface';
 
 const createPost = catchAsync(async (req: Request, res: Response) => {
-  const result = await PostService.createPost(req);
+  const result = await PostService.createPost(req as any);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -53,7 +54,7 @@ const deletePost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updatePost = catchAsync(async (req: Request, res: Response) => {
-  const result = await PostService.updatePost(req.params.id, req);
+  const result = await PostService.updatePost(req.params.id, req as any);
   sendResponse(res, {
     statusCode: 200,
     success: true,
