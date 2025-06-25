@@ -41,7 +41,7 @@ const promoPackageSchema = new Schema<IPromoPackage, PromoPackageModel>(
 
     packageDuration: {
       type: Number,
-      default: 12,
+      default: 30,
     },
     trainingVideo: {
       type: packageDetailSchema,
