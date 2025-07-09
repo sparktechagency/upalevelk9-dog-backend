@@ -43,10 +43,16 @@ const insertIntoDB = async (req: Request) => {
   if (promo_code !== checkPromoCode?.code) {
     throw new ApiError(500, 'Invalid promo code');
   }
+  // const startDate = new Date();
+  // const endDate = new Date(
+  //   startDate.getTime() + isExistPackage.packageDuration * 24 * 60 * 60 * 1000,
+  // );
+
+  // update day to month for package duration
   const startDate = new Date();
-  const endDate = new Date(
-    startDate.getTime() + isExistPackage.packageDuration * 24 * 60 * 60 * 1000,
-  );
+  const endDate = new Date(startDate); // clone the date
+
+  endDate.setMonth(endDate.getMonth() + isExistPackage.packageDuration);
   const notification = new Notification({
     user: user,
     title: 'Promo Package Unlocked',
