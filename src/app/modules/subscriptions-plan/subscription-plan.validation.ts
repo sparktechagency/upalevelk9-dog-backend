@@ -7,7 +7,7 @@ const CreateSubscriptionPlanZodSchema = z.object({
       required_error: 'Package name is required',
     }),
     packagePrice: z.number({ required_error: 'Package Price is required' }),
-    packageDuration: z.number({
+    packageDuration: z.string({
       required_error: 'Package Duration is required',
     }),
     trainingVideo: z
@@ -57,7 +57,7 @@ const updateSubscriptionPlanZodSchema = z.object({
   body: z.object({
     packageName: z.enum([...packageName] as [string, ...string[]]).optional(),
     packagePrice: z.number().optional(),
-    packageDuration: z.number().optional(),
+    packageDuration: z.string().optional(),
     packageDetails: z
       .array(
         z.object({

@@ -5,6 +5,7 @@ import { ISubscriptionPlan } from './subscriptions-plan.interface';
 import { SubscriptionPlan } from './subscriptions-plan.model';
 
 const createSubscriptionPlanToDB = async (payload: ISubscriptionPlan) => {
+  payload.packageDuration = Number(payload.packageDuration);
   const result = await SubscriptionPlan.create(payload);
   return result;
 };
@@ -18,6 +19,9 @@ const updateSubscriptionPlanToDB = async (
   id: string,
   payload: ISubscriptionPlan,
 ) => {
+  if (payload.packageDuration) {
+    payload.packageDuration = Number(payload.packageDuration);
+  }
   const isExistPlan = await SubscriptionPlan.findById(id);
   if (!isExistPlan) {
     throw new ApiError(
