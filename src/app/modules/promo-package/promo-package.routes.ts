@@ -1,6 +1,6 @@
 import express from 'express';
-import auth from '../../middlewares/auth';
 import { ENUM_USER_ROLE } from '../../../enums/user';
+import auth from '../../middlewares/auth';
 import { PromosPlanController } from './promo-package.controller';
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.post(
 
 router.get(
   '/all',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.USER),
+  // auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.USER),
   PromosPlanController.getPromos,
 );
 router.get(
