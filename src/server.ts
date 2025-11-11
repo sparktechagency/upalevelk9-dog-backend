@@ -26,7 +26,7 @@ async function main() {
     const socketIO = new Server(server, {
       pingTimeout: 60000,
       cors: {
-        origin: 'http://143.198.3.51:3000',
+        origin: ['http://143.198.3.51:3000', 'http://localhost:3000'],
         // origin: 'http://192.168.10.11:3000',
       },
     });
