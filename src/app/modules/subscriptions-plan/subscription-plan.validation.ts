@@ -57,7 +57,7 @@ const updateSubscriptionPlanZodSchema = z.object({
   body: z.object({
     packageName: z.enum([...packageName] as [string, ...string[]]).optional(),
     packagePrice: z.number().optional(),
-    packageDuration: z.number().optional(),
+    packageDuration: z.string().optional(),
     packageDetails: z
       .array(
         z.object({
