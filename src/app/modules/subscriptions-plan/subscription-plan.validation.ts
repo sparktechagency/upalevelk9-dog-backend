@@ -1,11 +1,12 @@
 import { z } from 'zod';
-import { packageName } from '../../../constants/subscription.name';
+// import { packageName } from '../../../constants/subscription.name';
 
 const CreateSubscriptionPlanZodSchema = z.object({
   body: z.object({
-    packageName: z.enum([...packageName] as [string, ...string[]], {
-      required_error: 'Package name is required',
-    }),
+    // packageName: z.enum([...packageName] as [string, ...string[]], {
+    //   required_error: 'Package name is required',
+    // }),
+    packageName: z.string(),
     packagePrice: z.number({ required_error: 'Package Price is required' }),
     packageDuration: z.string({
       required_error: 'Package Duration is required',
@@ -55,7 +56,8 @@ const CreateSubscriptionPlanZodSchema = z.object({
 
 const updateSubscriptionPlanZodSchema = z.object({
   body: z.object({
-    packageName: z.enum([...packageName] as [string, ...string[]]).optional(),
+    // packageName: z.enum([...packageName] as [string, ...string[]]).optional(),
+    packageName: z.string(),
     packagePrice: z.number().optional(),
     packageDuration: z.number().optional(),
     packageDetails: z

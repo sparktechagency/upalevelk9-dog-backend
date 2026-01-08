@@ -1,1 +1,1 @@
-export const packageName = ['Basic', 'Standard', 'Premium'];
+// export const packageName = ['Basic', 'Standard', 'Premium'];
