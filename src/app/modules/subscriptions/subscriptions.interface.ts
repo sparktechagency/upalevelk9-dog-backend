@@ -11,5 +11,6 @@ export type ISubscription = {
   status: SubscriptionState;
   transaction_id: string;
   amount: string;
-  plan_type: 'Basic' | 'Standard' | 'Premium';
+  // plan_type: 'Basic' | 'Standard' | 'Premium';
+  plan_type: string;
 };

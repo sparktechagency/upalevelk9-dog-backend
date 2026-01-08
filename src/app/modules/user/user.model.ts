@@ -1,8 +1,8 @@
-import { Schema, model } from 'mongoose';
-import { IUser, UserModel } from './user.interface';
 import bcrypt from 'bcrypt';
-import config from '../../../config';
+import { Schema, model } from 'mongoose';
 import validator from 'validator';
+import config from '../../../config';
+import { IUser, UserModel } from './user.interface';
 
 const UserSchema = new Schema<IUser, UserModel>(
   {
@@ -100,7 +100,7 @@ const UserSchema = new Schema<IUser, UserModel>(
     },
     plan_type: {
       type: String,
-      enum: ['silver', 'gold', 'premium'],
+      // enum: ['silver', 'gold', 'premium'],
     },
     isSubscribed: {
       type: Boolean,

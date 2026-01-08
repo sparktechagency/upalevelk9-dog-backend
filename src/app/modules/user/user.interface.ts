@@ -59,7 +59,8 @@ export type IUser = {
   eyes: string;
   looking_for: string;
   gender: 'male' | 'female' | 'others' | '';
-  plan_type: 'free' | 'silver' | 'gold' | 'premium';
+  // plan_type: 'free' | 'silver' | 'gold' | 'premium';
+  plan_type: string;
   isSubscribed: boolean;
   is_block: boolean;
   verifyCode: any;
