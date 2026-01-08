@@ -1,5 +1,4 @@
 import { z } from 'zod';
-// import { packageName } from '../../../constants/subscription.name';
 
 const CreateSubscriptionPlanZodSchema = z.object({
   body: z.object({
