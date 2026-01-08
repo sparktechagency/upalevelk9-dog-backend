@@ -1,6 +1,5 @@
 import httpStatus from 'http-status';
 import { model, Schema } from 'mongoose';
-import { packageName } from '../../../constants/subscription.name';
 import ApiError from '../../../errors/ApiError';
 import {
   IPackageDetails,
@@ -28,7 +27,6 @@ const subscriptionPlanSchema = new Schema<
   {
     packageName: {
       type: String,
-      enum: packageName,
       required: true,
     },
     packagePrice: {
