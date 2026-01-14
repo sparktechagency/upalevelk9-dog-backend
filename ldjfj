@@ -1,0 +1,90 @@
+[33m0a66571[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m s
+[33mfaf0479[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Delete .env.example
+[33mdb34c93[m s
+[33me674945[m s
+[33m4e0d8e1[m s
+[33m1b8d623[m s
+[33m1ffe2bd[m s
+[33m12fd51f[m s
+[33m800409c[m s
+[33mc037719[m s
+[33mab69f34[m s
+[33m622de29[m s
+[33m4fb194b[m change cors
+[33m919399f[m s
+[33m1c35b70[m s
+[33m601fa15[m s
+[33m0b3f686[m s
+[33m3d049da[m make changes
+[33m10280ac[m s
+[33m75aae2e[m s
+[33m01e6b80[m Merge pull request #12 from bdCalling-Sdt-hub/manikdev
+[33mcdbf1c4[m[33m ([m[1;31morigin/manikdev[m[33m)[m s
+[33ma4fa74d[m Merge pull request #11 from bdCalling-Sdt-hub/manikdev
+[33mfbf2528[m s
+[33m31f5b1b[m s
+[33m022fbe1[m make changes for ordered the video
+[33m57e6b11[m Merge pull request #10 from bdCalling-Sdt-hub/manikdev
+[33m3e087da[m s
+[33m5784c02[m Merge pull request #9 from bdCalling-Sdt-hub/manikdev
+[33m9a30c96[m s
+[33mf44532a[m Merge pull request #8 from bdCalling-Sdt-hub/manikdev
+[33mfbb857c[m sort the program
+[33m9726e2d[m Merge pull request #7 from bdCalling-Sdt-hub/manikdev
+[33mcf93242[m make chagnes
+[33m3587d99[m Merge pull request #6 from bdCalling-Sdt-hub/manikdev
+[33mc994460[m s
+[33ma6f3399[m Merge pull request #5 from bdCalling-Sdt-hub/manikdev
+[33m076884c[m a
+[33m1390156[m Merge pull request #4 from bdCalling-Sdt-hub/manikdev
+[33ma92814e[m make changes
+[33m6f2b651[m create api for reorder the articel
+[33m6407176[m make changes
+[33me6b4336[m s
+[33m53025a9[m Merge pull request #3 from bdCalling-Sdt-hub/devsmanik
+[33m0295638[m[33m ([m[1;31morigin/devsmanik[m[33m)[m s
+[33m50844a2[m Merge pull request #2 from bdCalling-Sdt-hub/devsmanik
+[33m0a7c021[m make some changes
+[33m3389684[m make changes
+[33ma296008[m s
+[33m8c58954[m dev manik
+[33mc3c506d[m Merge pull request #1 from bdCalling-Sdt-hub/devsmanik
+[33ma22f752[m solve video upload issue
+[33m2095b6a[m upload video with chunk
+[33ma15af2f[m fix issues
+[33m18d3bab[m Refactor auth middleware
+[33mf9e9f30[m add url in cors
+[33m64404b4[m add url in cors
+[33mc56120b[m add ip and change port
+[33m723c318[m [DONE] complete project
+[33ma1b22dc[m give whole permisson in super admin
+[33mb354a83[m make the notification real time
+[33m61f6fbd[m refactor promo
+[33m0512b8f[m [DONE] complete promo code
+[33mc8106b2[m [DONE] refactor promo
+[33mcce287b[m Refactor subscription plan
+[33m781624a[m :recycle: upgrade plan api created
+[33m6ecb59e[m :recycle: subscription plan api created and :lock: stripe secret key added
+[33m10c7893[m :hammer: modify chatting system
+[33m5123087[m remove helmet from app
+[33md62930d[m gave access training base on subsc and promo
+[33mcf53f9c[m [DONE] give subsc and promo base access
+[33m4e59b93[m [DONE] complete to gave subscription base access to user
+[33m07a1f83[m complete promo code use case
+[33m97385a3[m refactor promo
+[33me16e42b[m add pagination in get message controller
+[33mcfd01fb[m add notification
+[33m720f51b[m refactor messages
+[33m8b8ead6[m refactor auth middleware
+[33m936c34d[m [DONE] add filtering in schedule
+[33m53f15eb[m modify image path
+[33m1042f52[m refactor signup and forget pass
+[33meca906a[m refactor signup and forget pass
+[33m881478f[m refactor auth
+[33ma08c188[m add bearer in auth middleware
+[33m19b319a[m add zod validation for each controller
+[33meb2fa7d[m add zod validation
+[33m21979e0[m modify file uploader
+[33m14c3da6[m validate user register using zod
+[33m9ffc5ef[m [DONE] complete to implement feedback
+[33m81a01c9[m first commit
