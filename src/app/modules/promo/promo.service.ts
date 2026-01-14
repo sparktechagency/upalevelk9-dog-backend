@@ -43,7 +43,7 @@ const insertIntoDB = async (req: Request) => {
   if (checkAlreadyUnlock && checkAlreadyUnlock.user == (user as any)) {
     throw new ApiError(500, 'You are already unlock this package');
   }
-  console.log('ar valo laga nah bal');
+  console.log('ar valo laga nah bal========================================>');
   console.log(
     'promo code===========>',
     promo_code,
