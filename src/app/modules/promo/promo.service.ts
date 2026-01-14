@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request } from 'express';
+import httpStatus from 'http-status';
 import ApiError from '../../../errors/ApiError';
 import Notification from '../notifications/notifications.model';
 import { PromoCode, PromoPackage } from '../promo-package/promo-package.model';
-import User from '../user/user.model';
-import { Promo } from './promo.model';
-import { IReqUser } from '../user/user.interface';
-import { IPromo } from './promo.inrerface';
 import { Subscription } from '../subscriptions/subscriptions.model';
+import { IReqUser } from '../user/user.interface';
+import User from '../user/user.model';
+import { IPromo } from './promo.inrerface';
+import { Promo } from './promo.model';
 
 const insertIntoDB = async (req: Request) => {
   const payload = req.body as IPromo;
@@ -31,7 +32,9 @@ const insertIntoDB = async (req: Request) => {
     throw new ApiError(404, 'Package not found');
   }
   const checkPromoCode = await PromoCode.findOne({ code: promo_code });
-
+  if (!checkPromoCode) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Promo not found with that code');
+  }
   const alreadyHavePlan = await Subscription.findOne({ user_id: user });
 
   if (alreadyHavePlan) {
@@ -40,6 +43,14 @@ const insertIntoDB = async (req: Request) => {
   if (checkAlreadyUnlock && checkAlreadyUnlock.user == (user as any)) {
     throw new ApiError(500, 'You are already unlock this package');
   }
+  console.log(
+    'promo code',
+    promo_code,
+    'db promo',
+    checkPromoCode,
+    'code',
+    checkPromoCode?.code,
+  );
   if (promo_code !== checkPromoCode?.code) {
     throw new ApiError(500, 'Invalid promo code');
   }
